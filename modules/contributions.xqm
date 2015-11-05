@@ -76,7 +76,7 @@ function contributions:table($node as node(), $model as map(*))
                 let $date    := xs:string($contribution/ancestor::mods:mods/mods:originInfo/mods:dateIssued[@keyDate='yes'])
                 let $id      := $contribution/@ID
                 let $label   := $title || '  (' || $date || ')'
-                let $link    := 'contribution.html?issueid=' || $issueid || '&amp;id=' || $id
+                let $link    := 'contribution.html?issueid=' || $issueid || '&amp;constid=' || $id
                 order by $date
                 return
                     <tr>
