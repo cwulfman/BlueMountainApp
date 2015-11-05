@@ -65,17 +65,12 @@ as map(*)
 {
     let $titleid := $model("selected-title")/mods:identifier[@type='bmtn']
     let $issues := collection($config:data-root)//mods:mods[./mods:relatedItem[@type='host' and @xlink:href = $titleid]]
-    let $names := $issues//mods:name
+    let $names := $issues//mods:relatedItem[@type='constituent']//mods:name
     let $viafids := $names/@valueURI
     return
         map { 'contributors' := $names }
 };
 
-declare function local:contributors($node as node(), $model as map(*))
-as map(*)
-{
-    let $titleid := $model("selected-title")/mods:identifier[@type="bmtn"]
-    let $issues := collection($config:data-root)//mods:mods[.//relatedItem[@type='host']/@xlink:href = $titleid]
-    let $names := $issues/mods:name
-    return map { "contributors" := $names }
-};
+
+
+

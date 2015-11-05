@@ -250,8 +250,32 @@ declare function title:size-chart-script($node as node(), $model as map(*))
 declare function title:contributor-table($node as node(), $model as map(*))
 {
     let $contributors := $model('contributors')
-    let $known-contributors := distinct-values($contributors/@valueURI)
+    let $titleURN := $model('selected-title')//mods:identifier[@type='bmtn']
+    let $known-contributor-ids := distinct-values($contributors/@valueURI)
     let $unknown-contributors := distinct-values($contributors[empty(@valueURI)]/mods:displayForm)
+    let $known-rows :=
+        for $authid in $known-contributor-ids
+            let $count  := count($contributors[@valueURI = $authid])
+            let $label :=  $contributors[@valueURI = $authid][1]/mods:displayForm/text()
+            let $link  := 'contributions.html?titleURN=' || $titleURN || '&amp;authid=' || $authid
+            return
+                <tr>
+                    <td>{ $label }</td>
+                    <td><a href="{$link}">{ $count }</a></td>
+                </tr>
+    let $unknown-rows :=
+        for $person in $unknown-contributors
+            let $count := count($contributors[mods:displayForm = $person])
+            let $label := $person
+            let $link := ()
+            order by $count descending
+            return
+                <tr>
+                    <td>{ $label }</td>
+                   <td><a href="{$link}">{ $count }</a></td>  
+                </tr>
+     let $rows := ($known-rows,$unknown-rows)
+           
     
     return 
         <table class="table">
@@ -264,26 +288,9 @@ declare function title:contributor-table($node as node(), $model as map(*))
          </thead>
          <tbody>
          {
-            for $person in $known-contributors
-            let $count := count($contributors[@valueURI = $person])
-            let $label := $contributors[@valueURI = $person][1]/mods:displayForm/text()
-            order by $count descending
-            return
-                <tr>
-                    <td>{ $label }</td>
-                    <td>{ $count  }</td>
-                </tr>
-         },
-         {
-            for $person in $unknown-contributors
-            let $count := count($contributors[mods:displayForm = $person])
-            let $label := $person
-            order by $count descending
-            return
-                <tr>
-                    <td>{ $label }</td>
-                    <td>{ $count  }</td>     
-                </tr>
+            for $row in $rows
+            order by xs:int($row//td[2]/a) descending
+            return $row
           }
          </tbody>
         </table>
