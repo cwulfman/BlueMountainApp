@@ -282,7 +282,7 @@ as element()
 declare %templates:wrap function issue:ms-description($node as node(), $model as map(*))
 as element()?
 { 
-    let $msDesc := $model("selected-issue-transcription")/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:msDesc
+    let $msDesc := $model("selected-issue-transcription")/tei:teiHeader//tei:msDesc
     let $xsl    := doc($config:app-root || "/resources/xsl/msdesc.xsl")
     let $div    := transform:transform($msDesc, $xsl, ())
     return $div
