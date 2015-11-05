@@ -19,6 +19,7 @@ import module namespace issue="http://bluemountain.princeton.edu/modules/issue" 
 import module namespace bmtneer="http://bluemountain.princeton.edu/modules/bmtneer" at "bmtneer.xqm" ;
 import module namespace selections="http://bluemountain.princeton.edu/modules/selections" at "selections.xqm" ;
 import module namespace contributions="http://bluemountain.princeton.edu/modules/contributions" at "contributions.xqm" ;
+import module namespace contribution="http://bluemountain.princeton.edu/modules/contribution" at "contribution.xqm" ;
 
 
 
