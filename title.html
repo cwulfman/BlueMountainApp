@@ -4,7 +4,12 @@
         <div class="row">
             <div class="col-md-8">
                 <h1 data-template="title:label">Broom</h1>
-                <p class="abstract" data-template="title:abstract">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ut lorem massa. Duis sed neque sed nulla maximus volutpat. Nam faucibus rutrum venenatis. Phasellus at augue vel mi aliquam vehicula id non diam. Aliquam rhoncus ligula sed urna ornare tincidunt at et ipsum. Sed posuere viverra fringilla. Duis ullamcorper pretium risus, in sagittis turpis egestas sit amet. Mauris at dui eget lorem porttitor porta et in orci. Quisque velit lorem, luctus quis lobortis in, pulvinar a ipsum. Quisque maximus augue sit amet magna tempus, eget sodales tortor finibus. Cras faucibus viverra fermentum. Curabitur fermentum nunc nec enim sagittis placerat. Mauris nulla leo, ornare et congue vitae, varius auctor ante. Fusce non commodo sapien, at aliquam nibh.</p>
+                <p class="abstract" data-template="title:abstract">Lorem ipsum dolor sit amet, 
+                    consectetur adipiscing elit. Nulla ut lorem massa. Duis sed neque sed nulla maximus volutpat.
+                    Nam faucibus rutrum venenatis. Phasellus at augue vel mi aliquam vehicula id non diam. 
+                    Aliquam rhoncus ligula sed urna ornare tincidunt at et ipsum. Sed posuere viverra fringilla.
+                    Duis ullamcorper pretium risus, in sagittis turpis egestas sit amet. 
+                    Mauris at dui eget lorem porttitor porta et in orci.</p>
             </div>
             <div class="col-md-4">
                 <img data-template="title:icon" src="http://localhost:8080/exist/rest/db/bluemtn/resources/icons/periodicals/bmtnaap/large.jpg" alt="icon"/>
@@ -12,9 +17,7 @@
                 <a href="" data-template="title:link">Browse title in the archive</a>
             </div>
         </div>
-        <hr/>
-        <!-- TODO: Create ajax-based panels with tabs for overview -->
-<!--        <div class="row">
+        <hr/><!-- TODO: Create ajax-based panels with tabs for overview --><!--        <div class="row">
             <ul class="nav nav-tabs" role="tablist">
                 <li>
                     <a href="#">Available Issues</a>
@@ -62,6 +65,34 @@
             </script>
             <div class="col-md-4">
                 <div id="curve_chart"/>
+                <hr/>
+                <section id="known-contributors" data-template="bmtneer:contributors">
+                    <table class="table" data-template="title:contributor-table">
+                        <caption>Known Contributors</caption>
+                        <thead>
+                            <tr>
+                                <th>Contributor</th>
+                                <th>No. of Contributions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Jane Doe</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td>Jack Sprat</td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>foot 1</td>
+                                <td>foot 2</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </section>
             </div>
             <div class="col-md-8">
                 <div>
@@ -92,9 +123,7 @@
                 </div>
             </div>
         </div>
-        <div class="row"/>
-        
- <!--       <div class="row">
+        <div class="row"/><!--       <div class="row">
             <div class="col-md-4">
                 <div data-template="title:issues">
                     <p>Blue Mountain contains <span data-template="title:issue-count"/>

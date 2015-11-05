@@ -238,3 +238,61 @@ declare function title:size-chart-script($node as node(), $model as map(*))
             
     </script>
 };
+
+(:~
+    Return a table of names and counts from the contributors property of the model.
+    For names with a viaf id (known contributors) we can get an accurate count; for
+    unknown contributors, we have to rely on the byline.
+    
+    Until we have a local authority file, it's too expensive to go out and get an authorized
+    name for the viaf id, so we cheat and use the first byline used by that person.
+ :)
+declare function title:contributor-table($node as node(), $model as map(*))
+{
+    let $contributors := $model('contributors')
+    let $known-contributors := distinct-values($contributors/@valueURI)
+    let $unknown-contributors := distinct-values($contributors[empty(@valueURI)]/mods:displayForm)
+    
+    return 
+        <table class="table">
+        <caption>Contributors</caption>
+        <thead>
+           <tr>
+             <th>Contributor</th>
+             <th>No. of Contributions</th>
+           </tr>
+         </thead>
+         <tbody>
+         {
+            for $person in $known-contributors
+            let $count := count($contributors[@valueURI = $person])
+            let $label := $contributors[@valueURI = $person][1]/mods:displayForm/text()
+            order by $count descending
+            return
+                <tr>
+                    <td>{ $label }</td>
+                    <td>{ $count  }</td>
+                </tr>
+         },
+         {
+            for $person in $unknown-contributors
+            let $count := count($contributors[mods:displayForm = $person])
+            let $label := $person
+            order by $count descending
+            return
+                <tr>
+                    <td>{ $label }</td>
+                    <td>{ $count  }</td>     
+                </tr>
+          }
+         </tbody>
+        </table>
+};
+
+
+
+
+
+
+
+
