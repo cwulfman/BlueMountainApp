@@ -33,6 +33,34 @@ declare function contribution:transcription($node as node(), $model as map(*))
     return $transcription
 };
 
+declare function contribution:facsimile($node as node(), $model as map(*))
+{
+    let $constituent := $model('current-constituent')
+    let $issue       := $model('current-issue')
+    let $issueid     := $model('issueid')
+    let $facs-links  := $constituent//element()/@facs
+    let $zones       := 
+        for $link in $facs-links
+        return $issue/tei:facsimile//element()[@xml:id = $link]
+    let $graphics-uris :=
+        for $zone in $zones
+        let $surface := $zone/ancestor::tei:surface
+        return xs:string($surface/tei:graphic/@url)
+    
+    return
+    <ol>
+        {
+            for $url in distinct-values($graphics-uris) 
+            order by $url 
+            return 
+                <li>
+                    <img src="{ app:image-path($issueid,$url) }" alt="page image" />
+                </li>
+            
+        }
+    </ol>
+};
+
 declare function contribution:title($node as node(), $model as map(*))
 {
     let $constid := $model('constid')
