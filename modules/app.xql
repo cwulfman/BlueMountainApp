@@ -98,7 +98,7 @@ as element()
     else $modsrec/mods:titleInfo[1]
 };
 
-declare function app:image-path($issueid as xs:string, $imgname as xs:string)
+declare function app:image-url($issueid as xs:string, $imgname as xs:string)
 as xs:string
 {
     let $protocol := "http://",
@@ -125,4 +125,30 @@ as xs:string
     
         
     return $uri
+};
+
+declare function app:image-path($issueid as xs:string, $imgname as xs:string)
+as xs:string
+{
+    let $protocol := "http://",
+        $host     := "libimages.princeton.edu",
+        $service  := "loris2",
+        $region   := "full",
+        $size     := "360,",
+        $rotation := "0",
+        $quality  := "default",
+        $format   := "png"
+
+    let $base     := "bluemountain/astore%2Fperiodicals"
+    
+    
+    let $fulltok  := tokenize($issueid, ':')[last()],
+        $idtok    := substring-before($fulltok, '_'),
+        $datetok  := substring-after($fulltok, '_'),
+        $datetok  := replace($datetok, '-', '%2F')
+        
+    let $path     := string-join( ($base,$idtok,'issues',$datetok,'delivery', $fulltok), '%2F'),
+        $path     := string-join( ($path, $imgname), '_')   
+        
+    return $path
 };
