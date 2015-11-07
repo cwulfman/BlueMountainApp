@@ -18,9 +18,7 @@
         </p>
     </xsl:template>
     <xsl:template match="tei:div">
-        <div>
-            <xsl:apply-templates/>
-        </div>
+        <xsl:apply-templates/>
     </xsl:template>
     <xsl:template match="tei:lb">
         <br/>
