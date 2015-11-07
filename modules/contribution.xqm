@@ -41,12 +41,9 @@ declare function contribution:facsimile($node as node(), $model as map(*))
     let $facs-links  := $constituent//element()/@facs
     let $zones       := 
         for $link in $facs-links
-        return $issue/tei:facsimile//element()[@xml:id = $link]
-    let $graphics-uris :=
-        for $zone in $zones
-        let $surface := $zone/ancestor::tei:surface
-        return xs:string($surface/tei:graphic/@url)
-    
+        return $issue/id($link)
+      let $graphics-uris :=
+        for $zone in $zones return $zone/ancestor::tei:surface/tei:graphic/@url
     return
     <ol>
         {
@@ -56,7 +53,6 @@ declare function contribution:facsimile($node as node(), $model as map(*))
                 <li>
                     <img src="{ app:image-path($issueid,$url) }" alt="page image" />
                 </li>
-            
         }
     </ol>
 };
