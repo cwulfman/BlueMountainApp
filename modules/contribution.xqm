@@ -82,10 +82,30 @@ declare function contribution:facsimile($node as node(), $model as map(*))
         </script>
 };
 
-declare function contribution:title($node as node(), $model as map(*))
+declare 
+    %templates:wrap
+function contribution:title($node as node(), $model as map(*))
 {
     let $constid := $model('constid')
     let $issue := $model('current-issue')
     let $relitem := $issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:relatedItem[@xml:id = $constid]
     return $relitem/tei:biblStruct/tei:analytic/tei:title/tei:seg
+};
+
+declare 
+    %templates:wrap
+function contribution:author($node as node(), $model as map(*))
+{
+    let $constid := $model('constid')
+    let $issue := $model('current-issue')
+    let $relitem := $issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:relatedItem[@xml:id = $constid]
+    let $resps := $relitem/tei:biblStruct/tei:analytic/tei:respStmt
+    let $strings :=
+        for $resp in $resps
+        return
+            if ($resp/tei:persName) then xs:string($resp/tei:persName)
+            else if ($resp/tei:orgName) then xs:string($resp/tei:orgName)
+            else ""
+    return string-join(($strings), ',')
+        
 };

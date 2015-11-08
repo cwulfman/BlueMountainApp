@@ -21,6 +21,9 @@
         </span>
     </xsl:template>
     <xsl:template match="mods:relatedItem">
+        <xsl:variable name="title-link">
+            <xsl:value-of select="concat('contribution.html?issueid=', $issueURN,'&amp;constid=', @ID)"/>
+        </xsl:variable>
         <xsl:variable name="title">
             <xsl:choose>
                 <xsl:when test="mods:titleInfo">
@@ -36,12 +39,13 @@
             <xsl:when test="$context = 'constituent-listing-table'">
                 <tr>
                     <td>
-                        <xsl:value-of select="$title"/>
+                        <a href="{$title-link}">
+                            <xsl:value-of select="$title"/>
+                        </a>
                     </td>
                     <td>
                         <xsl:value-of select="$creators"/>
-                    </td>
-<!--                    <td>
+                    </td><!--                    <td>
                         <a href="{$veridianLink}">view pages</a>
                     </td>
                     <td>
