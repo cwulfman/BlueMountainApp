@@ -286,13 +286,19 @@ declare function selections:formatted-item($item as element())
         $journal/tei:title/tei:seg[@type='main']/text()
     let $volume :=
         if ($journal/tei:imprint/tei:biblScope[@unit='vol'])
-        then concat("Vol. ", $journal/tei:imprint/tei:biblScope[@unit='vol'])
+        then 
+            for $v in $journal/tei:imprint/tei:biblScope[@unit='vol']
+            return        concat("Vol. ", $v)
         else ()
     let $number :=
         if ($journal/tei:imprint/tei:biblScope[@unit='issue'])
-        then concat("No. ", $journal/tei:imprint/tei:biblScope[@unit='issue']/text())
+        then 
+            for $i in $journal/tei:imprint/tei:biblScope[@unit='issue']
+            return concat("No. ", $i)
         else ()
-    let $date := xs:string($journal/tei:imprint/tei:date/@when)
+    let $date := 
+        for $d in $journal/tei:imprint/tei:date
+        return xs:string($d/@when)
     (: let $issueLink := app:veridian-url-from-bmtnid($journal/mods:identifier[@type='bmtn']) :)
     let $issueLink := concat('issue.html?issueURN=',$journal/ancestor::tei:teiHeader/tei:publicationStmt/tei:idno[@type='bmtnid'])
         
