@@ -52,14 +52,14 @@ declare %templates:wrap function selections:selected-items($node as node(), $mod
                                                            $magazine as xs:string*)
 as map(*)? 
 {
-    let $transcription-db := "/db/bluemtn/transcriptions"
+
     let $name-hits  := 
         if ($query !='')
-            then collection($transcription-db)//tei:relatedItem[ft:query(.//tei:persName, $query)]
+            then collection($config:transcript-root)//tei:relatedItem[ft:query(.//tei:persName, $query)]
          else ()
     let $title-hits := 
         if ($query != '')
-            then collection($transcription-db)//tei:relatedItem[ft:query(.//tei:title, $query)]
+            then collection($config:transcript-root)//tei:relatedItem[ft:query(.//tei:title, $query)]
          else ()
 (:    let $ft-hits :=
         if ($query != '')
@@ -70,7 +70,7 @@ as map(*)?
         if ($byline != '')
         then 
             for $line in $byline return 
-        collection($transcription-db)//tei:relatedItem[ft:query(.//tei:persName, $line)]
+        collection($config:transcript-root)//tei:relatedItem[ft:query(.//tei:persName, $line)]
         else ()
     
     
@@ -89,7 +89,7 @@ as map(*)?
     let $ft-hits :=
         if ($query != '')
             then
-                for $hit in collection($transcription-db)//tei:div[ft:query(.//tei:ab, $query)]
+                for $hit in collection($config:transcript-root)//tei:div[ft:query(.//tei:ab, $query)]
                 order by ft:score($hit) descending
                 return $hit
         else ()
