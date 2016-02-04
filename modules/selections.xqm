@@ -61,11 +61,7 @@ as map(*)?
         if ($query != '')
             then collection($config:transcript-root)//tei:relatedItem[ft:query(.//tei:title, $query)]
          else ()
-(:    let $ft-hits :=
-        if ($query != '')
-            then collection($transcription-db)//tei:ab[ft:query(., $query)]
-        else ()
-:)
+
     let $restrictions :=
         if ($byline != '')
         then 
@@ -79,7 +75,7 @@ as map(*)?
         if ($restrictions)
         then $query-hits intersect $restrictions
         else $query-hits
-    let $hist :=
+    let $hits :=
         for $hit in $hits order by ft:score($hit) descending return $hit
     let $hits :=
         if ($magazine)
@@ -149,6 +145,7 @@ declare %templates:wrap function selections:foo($node as node(), $model as map(*
         <br/>
        <fieldset>
         <legend>with byline</legend>
+        
         <ol>
         {
            let $names := $model("selected-items")//tei:persName

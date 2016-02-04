@@ -17,7 +17,7 @@ declare function contribution:contribution($node as node(), $model as map(*), $i
 as map(*)
 {
 
-let $issue := collection('/db/bluemtn/transcriptions')/tei:TEI[./tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[. = $issueid]]
+let $issue := collection($config:transcript-root)/tei:TEI[./tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[. = $issueid]]
 
     let $constituent := $issue//tei:div[@corresp = $constid]
     return
