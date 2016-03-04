@@ -19,43 +19,12 @@
         <xsl:value-of select="concat('/exist/rest', $app-root, '/resources/icons/periodicals/', $bmtnid, '/large.jpg')"/>
     </xsl:function>
     <xsl:template match="mods:mods">
-        <xsl:variable name="iconpath" select="local:title-icon(current()/mods:identifier[@type='bmtn'])"/>
-        <xsl:variable name="linkpath" select="concat( 'title.html?titleURN=', current()/mods:identifier[@type='bmtn'])"/>
-        <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
-                <img class="thumbnail" src="{$iconpath}" alt="icon"/>
-                <div class="caption">
-                    <dl class="dl-horizontal">
-                        <dt>Title</dt>
-                        <dd>
-                            <xsl:apply-templates select="mods:use-title(., '')"/>
-                        </dd>
-                        <dt>Dates</dt>
-                        <dd>
-                            <xsl:value-of select="mods:display-date(.)"/>
-                        </dd>
-                        <dt>Place Published</dt>
-                        <dd>
-                            <xsl:choose>
-                                <xsl:when test="mods:originInfo/mods:place/mods:placeTerm[@type='text' and @lang='en']">
-                                    <xsl:apply-templates select="mods:originInfo/mods:place/mods:placeTerm[@type='text'  and @lang='en']"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:apply-templates select="mods:originInfo/mods:place/mods:placeTerm[@type='text'][1]"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </dd>
-                    </dl>
-                    <ul>
-                        <li>
-                            <a href="{$linkpath}">Overview</a>
-                        </li>
-                        <li>
-                            <a href="{$veridianLink}">Read in archive</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        <xsl:variable name="iconpath" select="local:title-icon(current()/mods:identifier[@type = 'bmtn'])"/>
+        <xsl:variable name="linkpath" select="concat('title.html?titleURN=', current()/mods:identifier[@type = 'bmtn'])"/>
+        <li>
+            <a href="{$linkpath}">
+                <img class="img-thumbnail" src="{$iconpath}" alt="icon"/>
+            </a>
+        </li>
     </xsl:template>
 </xsl:stylesheet>

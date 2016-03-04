@@ -29,16 +29,17 @@ as element()*
     let $xsl := doc($config:app-root || "/resources/xsl/titles.xsl")
 	return
 	<div class="row">
+	   <ul id="title-list" class="list-inline">
 	{ 
 		for $title in $model("titles")
 		let $xslt-parameters := 
         <parameters>
         <param name="app-root" value="{$config:app-root}"/>
-        <param name="veridianLink" value="{app:veridian-title-url-from-bmtnid($title/mods:identifier[@type='bmtn'])}"/>
         </parameters>
 
 		return
 		transform:transform($title, $xsl, $xslt-parameters)
 	}
+	   </ul>
 	</div>
 };

@@ -6,13 +6,25 @@ footer {margin: 33px 10px 0 0;}
 div.transcription {font-size: smaller;}
 
 div.thumbnail{
-    border:1px solid black;
-    height: 350px;
+    border:1px solid silver;
+    height: 250px;
+}
+
+#title-list {
+}
+#title-list li{
+    vertical-align :bottom ;
+}
+
+#title-list li a {
+    display:table-cell;
+            vertical-align: middle;
+
 }
 
 .thumbnail img{
 
-    height:180px;
+/*    height:180px;*/
 }
 
 .dl-horizontal dt{

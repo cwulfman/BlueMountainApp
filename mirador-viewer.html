@@ -2,7 +2,13 @@
 <div xmlns="http://www.w3.org/1999/xhtml" data-template="templates:surround" data-template-with="templates/mirador-template.html" data-template-at="content">
     <div id="viewer"/>
     <script type="text/javascript" src="resources/mirador/mirador.js"/>
-    <script type="text/javascript">
+    <div data-template="issue:selected-issue">
+        <script type="text/javascript" data-template="issue:mirador-script">
+            var MANIFESTS = [ "bmtnaap_1921-11_01"
+            ]
+            
+            var COVERDIV = "DIVP2"
+        </script><!--<script type="text/javascript" data-template="issue:mirador-script">
         $(function() {
         Mirador({
         "id": "viewer", // The CSS ID selector for the containing element.
@@ -35,5 +41,6 @@
         ]
         });
         });
-    </script>
+    </script>-->
+    </div>
 </div>

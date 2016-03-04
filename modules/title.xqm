@@ -11,6 +11,7 @@ declare namespace mets="http://www.loc.gov/METS/";
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace xlink="http://www.w3.org/1999/xlink";
 
+
 declare %templates:wrap function title:selected-title($node as node(), $model as map(*), $titleURN as xs:string?)
 as map(*)? 
 {
@@ -143,16 +144,20 @@ as element()*
         let $vollabel   := $issue/mods:part[@type='issue']/mods:detail[@type='volume']/mods:number
         let $issuelabel := $issue/mods:part[@type='issue']/mods:detail[@type='number']/mods:number
         let $date       := $issue/mods:originInfo/mods:dateIssued[@keyDate='yes']
-        let $veridianlink := app:veridian-url-from-bmtnid($issueURN)
         let $thumbURL  := issue:thumbnailURL($issue)
+        let $viewer    := "mirador-viewer" (: choose between "issue" and "mirador-viewer" :)
     order by xs:dateTime(app:w3cdtf-to-xsdate($date))
     return
    
     
     <li>
-
-        <img class="thumbnail" src="{$thumbURL}" alt="thumbnail"  />
-            <br />
+        <dl>
+        <dt>
+        <a href="{$viewer}.html?titleURN={$titleURN}&amp;issueURN={ $issueURN }" class="thumbnail">
+        <img class="img-thumbnail" src="{$thumbURL}" alt="thumbnail"  />
+        </a>
+         </dt>
+         <dd>
         <dl class="dl-horizontal">
         <dt>Date</dt>
         <dd>{$date/text()}</dd>
@@ -163,12 +168,8 @@ as element()*
         <dt>Issue</dt>
         <dd>{$issuelabel}</dd>
         </dl>
-        <nav>
-            <ul>
-            <li><a href="issue.html?titleURN={$titleURN}&amp;issueURN={ $issueURN }">Description</a></li>
-            <li><a href="{$veridianlink}">Read in archive</a></li>
-            </ul>
-        </nav>
+    </dd>
+    </dl>
 
     </li>
  }</ol>

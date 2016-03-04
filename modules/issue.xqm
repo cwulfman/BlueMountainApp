@@ -11,6 +11,22 @@ declare namespace mets="http://www.loc.gov/METS/";
 declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
+declare function issue:mirador-script($node as node(), $model as map(*), $issueURN as xs:string?)
+as element()
+{
+    let $mets    := $model("selected-issue")/ancestor::mets:mets
+    let $bmtnid  := substring-after($mets//mods:mods//mods:identifier[@type='bmtn'], 'urn:PUL:bluemountain:')
+    let $coverdiv := xs:string($mets//mets:div[@TYPE='OUTSIDE_FRONT_COVER']/@ID)
+    return
+    <script type="text/javascript">
+        var MANIFESTS = [ &quot;{ $bmtnid }&quot;
+        ]
+        
+        var COVERDIV = &quot;{ $coverdiv }$&quot;
+</script>
+};
+
+
 (:~
  : Generate a javascript variable, PAGES, to be used in conjunction with Open Seadragon.
  :)
