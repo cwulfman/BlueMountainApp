@@ -3,7 +3,27 @@ footer .poweredby { float: right; margin: 33px 10px 0 0;}
 footer .poweredby img { width: 120px; }
 footer {margin: 33px 10px 0 0;}
 
+#listing {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+td.title-icon {
+    width: 40%;
+}
+
+td.title-abstract {
+    width: 50%;
+}
+
+td.title-issuance {
+    width: 10%;
+}
+
 div.transcription {font-size: smaller;}
+
+
+
 
 div.thumbnail{
     border:1px solid silver;
@@ -20,6 +40,14 @@ div.thumbnail{
     display:table-cell;
             vertical-align: middle;
 
+}
+
+img.title-list {
+    height: 180px;
+}
+
+td.title-abstract p {
+    font-size: larger ;
 }
 
 .thumbnail img{

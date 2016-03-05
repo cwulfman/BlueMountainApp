@@ -18,7 +18,7 @@
         <xsl:variable name="bmtnid" select="substring-after($titleURN, 'urn:PUL:bluemountain:')"/>
         <xsl:value-of select="concat('/exist/rest', $app-root, '/resources/icons/periodicals/', $bmtnid, '/large.jpg')"/>
     </xsl:function>
-    <xsl:template match="mods:mods">
+    <xsl:template match="mods:mods-old">
         <xsl:variable name="iconpath" select="local:title-icon(current()/mods:identifier[@type = 'bmtn'])"/>
         <xsl:variable name="linkpath" select="concat('title.html?titleURN=', current()/mods:identifier[@type = 'bmtn'])"/>
         <li>
@@ -26,5 +26,34 @@
                 <img class="img-thumbnail" src="{$iconpath}" alt="icon"/>
             </a>
         </li>
+    </xsl:template>
+    <xsl:template match="mods:mods">
+        <xsl:variable name="iconpath" select="local:title-icon(current()/mods:identifier[@type = 'bmtn'])"/>
+        <xsl:variable name="linkpath" select="concat('title.html?titleURN=', current()/mods:identifier[@type = 'bmtn'])"/>
+        <xsl:variable name="title">
+            <xsl:choose>
+                <xsl:when test="mods:titleInfo[@usage='primary']">
+                    <xsl:value-of select="xs:string(mods:titleInfo[@usage='primary']/mods:title[1])"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="xs:string(mods:titleInfo[1]/mods:title[1])"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <tr>
+            <td class="title-icon">
+                <a href="{$linkpath}" class="title-list-icon">
+                    <img class="img-thumbnail title-list" src="{$iconpath}" alt="icon"/>
+                </a>
+            </td>
+            <td class="title-abstract">
+                <p>
+                    <xsl:value-of select="xs:string(mods:abstract)"/>
+                </p>
+            </td>
+            <td class="title-issuance">
+                <xsl:value-of select="mods:originInfo/mods:dateIssued[1]"/>
+            </td>
+        </tr>
     </xsl:template>
 </xsl:stylesheet>

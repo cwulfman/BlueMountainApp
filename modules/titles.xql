@@ -28,8 +28,10 @@ as element()*
 {
     let $xsl := doc($config:app-root || "/resources/xsl/titles.xsl")
 	return
-	<div class="row">
-	   <ul id="title-list" class="list-inline">
+	
+	   
+	   <table class="table table-fixed" id="listing">
+	   <tbody>
 	{ 
 		for $title in $model("titles")
 		let $xslt-parameters := 
@@ -40,6 +42,7 @@ as element()*
 		return
 		transform:transform($title, $xsl, $xslt-parameters)
 	}
-	   </ul>
-	</div>
+	   </tbody>
+	   </table>
+
 };
