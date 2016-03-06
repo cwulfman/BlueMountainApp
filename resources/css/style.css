@@ -9,16 +9,14 @@ footer {margin: 33px 10px 0 0;}
 }
 
 td.title-icon {
-    width: 40%;
+    width: 30%;
 }
 
 td.title-abstract {
-    width: 50%;
+    width: 70%;
 }
 
-td.title-issuance {
-    width: 10%;
-}
+
 
 div.transcription {font-size: smaller;}
 

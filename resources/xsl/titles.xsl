@@ -47,12 +47,19 @@
                 </a>
             </td>
             <td class="title-abstract">
-                <p>
-                    <xsl:value-of select="xs:string(mods:abstract)"/>
-                </p>
-            </td>
-            <td class="title-issuance">
-                <xsl:value-of select="mods:originInfo/mods:dateIssued[1]"/>
+                <section>
+                    <header>
+                        <h3>
+                            <xsl:value-of select="$title"/>
+                        </h3>
+                        <span>
+                            <xsl:value-of select="mods:originInfo/mods:dateIssued[1]"/>
+                        </span>
+                    </header>
+                    <p>
+                        <xsl:value-of select="xs:string(mods:abstract)"/>
+                    </p>
+                </section>
             </td>
         </tr>
     </xsl:template>
