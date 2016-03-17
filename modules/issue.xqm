@@ -16,13 +16,15 @@ as element()
 {
     let $mets    := $model("selected-issue")/ancestor::mets:mets
     let $bmtnid  := substring-after($mets//mods:mods//mods:identifier[@type='bmtn'], 'urn:PUL:bluemountain:')
-    let $coverdiv := xs:string($mets//mets:div[@TYPE='OUTSIDE_FRONT_COVER']/@ID)
+    let $coverdivid := xs:string($mets//mets:div[@TYPE='OUTSIDE_FRONT_COVER']/@ID)
+    let $coverdiv-imgfileid := $mets//mets:div[@TYPE='OUTSIDE_FRONT_COVER']//mets:area[not(@BEGIN)]/@FILEID
+    let $pagegrp  := xs:string($mets//mets:file[@ID=$coverdiv-imgfileid]/@GROUPID)
     return
     <script type="text/javascript">
         var MANIFESTS = [ &quot;{ $bmtnid }&quot;
         ]
         
-        var COVERDIV = &quot;{ $coverdiv }$&quot;
+        var COVERDIV = &quot;{ $pagegrp }&quot;
 </script>
 };
 

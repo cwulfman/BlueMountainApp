@@ -1,46 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <div xmlns="http://www.w3.org/1999/xhtml" data-template="templates:surround" data-template-with="templates/mirador-template.html" data-template-at="content">
     <div id="viewer"/>
-    <script type="text/javascript" src="resources/mirador/mirador.js"/>
     <div data-template="issue:selected-issue">
         <script type="text/javascript" data-template="issue:mirador-script">
-            var MANIFESTS = [ "bmtnaap_1921-11_01"
-            ]
-            
+            var MANIFESTS = [ "bmtnaap_1921-11_01" ]
             var COVERDIV = "DIVP2"
-        </script><!--<script type="text/javascript" data-template="issue:mirador-script">
-        $(function() {
-        Mirador({
-        "id": "viewer", // The CSS ID selector for the containing element.
-        "currentWorkspaceType": "bookReading",
-        // "layout": "1x1", // The number and arrangement of windows ("row"x"column")?
-        "data": [ 
-        // This array holds the manifest URIs for the IIIF resources you want Mirador to make available to the user.
-        // Each manifest object must have a manifest URI pointing to a valid IIIF manifest, and may also
-        // provide a location to be displayed in the listing of available manifests.
-        { "manifestUri": "http://dms-data.stanford.edu/data/manifests/Walters/qm670kv1873/manifest.json", "location": "Stanford University"},
-        { "manifestUri": "http://localhost:8080/exist/restxq/springs/iiif/bmtnaap_1921-11_01/manifest.json", "location": "Princeton University"},
-        { "manifestUri": "http://localhost:8080/exist/restxq/springs/iiif/bmtnaap_1921-12_01/manifest.json", "location": "Princeton University"},
-        { "manifestUri": "http://localhost:8080/exist/restxq/springs/iiif/bmtnaap_1922-01_01/manifest.json", "location": "Princeton University"},
-        { "manifestUri": "http://localhost:8080/exist/restxq/springs/iiif/bmtnaap_1922-02_01/manifest.json", "location": "Princeton University"},
-        
-        ],
-        // This array allows the user to specify which of the included manifests should appear 
-        // in the workspace, and what the configuration of the window (zoom level, open panels, etc.) 
-        // ought to be. To begin with, we will leave it blank. 
-        "windowObjects": [
-        {
-        "loadedManifest": "http://localhost:8080/exist/restxq/springs/iiif/bmtnaap_1921-11_01/manifest.json",
-        "viewType" : "BookView", 
-        "canvasID": "http://bluemountain.princeton.edu/api/presentation/bmtnaap_1921-11_01/canvas/DIVP2",
-        //"bottomPanel" : false,
-        //"sidePanel" : false
-        //"availableViews" : ['ThumbnailsView', 'ImageView', 'BookView']
-        //"overlay" : false
-        }        
-        ]
-        });
-        });
-    </script>-->
+        </script>
     </div>
 </div>

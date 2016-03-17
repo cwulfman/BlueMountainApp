@@ -1,5 +1,6 @@
 // CEW 3/2016. Based on osdloader.js
-var SERVER = 'http://localhost:8080/exist/restxq/springs/iiif/'
+var SERVERold = 'http://:8080/exist/restxq/springs/iiif/'
+var SERVER = 'http://libserv14-dev.princeton.edu:8080/exist/restxq/springs/iiif/'
 
 var mirador_config = {
     id: "viewer",
@@ -8,8 +9,7 @@ var mirador_config = {
     windowObjects: [
         {
             "loadedManifest" : SERVER + MANIFESTS[0] + '/manifest.json',
-            "viewType" : "BookView",
-            "canvasID" : SERVER + MANIFESTS[0] + '/canvas/' + COVERDIV
+            "viewType" : "BookView"
         }
     ]
     }
