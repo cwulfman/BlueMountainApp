@@ -20,8 +20,9 @@ td.title-abstract {
 
 div.transcription {font-size: smaller;}
 
+fieldset legend, label {font-size: smaller; }
 
-
+.list-group-item {font-size: smaller; }
 
 div.thumbnail{
     border:1px solid silver;

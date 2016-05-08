@@ -7,8 +7,9 @@ import module namespace config="http://bluemountain.princeton.edu/config" at "co
 import module namespace app="http://bluemountain.princeton.edu/modules/app" at "app.xql";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
+declare namespace tei="http://www.tei-c.org/ns/1.0";
 
-declare %templates:wrap function titles:all($node as node(), $model as map(*)) 
+declare %templates:wrap function titles:all-mods($node as node(), $model as map(*)) 
 as map(*) 
 {
     let $titleSequence :=
@@ -16,6 +17,16 @@ as map(*)
         order by lower-case(app:use-title($rec)/mods:title)
          
         return $rec
+    return map { "titles" := $titleSequence }
+};
+
+declare %templates:wrap function titles:all-tei($node as node(), $model as map(*)) 
+as map(*) 
+{
+    let $titleSequence :=
+        for $doc in collection($config:transcript-root)/tei:TEI[tei:teiHeader/tei:profileDesc/tei:textClass/tei:classCode='300215389']
+        order by lower-case(app:use-title-tei($doc))
+        return $doc
     return map { "titles" := $titleSequence }
 };
 
@@ -44,5 +55,25 @@ as element()*
 	}
 	   </tbody>
 	   </table>
+};
 
+
+declare function titles:table-tei($node as node(), $model as map(*))
+as element()*
+{
+    let $xsl := doc($config:app-root || "/resources/xsl/titles-table.xsl")
+    let $xsl-parameters :=
+        <parameters>
+            <param name="app-root" value="{$config:app-root}"/>
+        </parameters>
+	return
+	   <table class="table table-fixed" id="listing">
+	   <tbody>
+	{ 
+		for $title in $model("titles")
+		return
+		transform:transform($title, $xsl, $xsl-parameters)
+	}
+	   </tbody>
+	   </table>
 };

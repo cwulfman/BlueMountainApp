@@ -8,6 +8,7 @@ import module namespace config="http://bluemountain.princeton.edu/config" at "co
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace mets="http://www.loc.gov/METS/";
 declare namespace xlink="http://www.w3.org/1999/xlink";
+declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 
 
@@ -96,6 +97,16 @@ as element()
     if ($modsrec/mods:titleInfo[@usage='primary'])
     then $modsrec/mods:titleInfo[@usage='primary']
     else $modsrec/mods:titleInfo[1]
+};
+
+declare function app:use-title-tei($tei as element())
+as element()
+{
+    let $title :=
+    $tei/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:title[@level='j']
+    return
+        if ($title) then $title
+        else <tei:title>no title</tei:title>
 };
 
 declare function app:image-url($issueid as xs:string, $imgname as xs:string)
