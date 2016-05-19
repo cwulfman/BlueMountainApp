@@ -14,9 +14,14 @@
         <xsl:apply-templates select="teiHeader/fileDesc/sourceDesc/biblStruct/monogr"/>
     </xsl:template>
     <xsl:template match="monogr">
+        <xsl:variable name="idno">
+            <xsl:value-of select="current()/ancestor::fileDesc/publicationStmt/idno[@type='bmtnid']"/>
+        </xsl:variable>
         <tr>
             <td>
-                <xsl:apply-templates select="title[@level='j']"/>
+                <a href="{concat('title.html?titleURN=',$idno)}">
+                    <xsl:apply-templates select="title[@level='j']"/>
+                </a>
             </td>
             <td>
                 <xsl:apply-templates select="imprint/date"/>

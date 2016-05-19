@@ -12,6 +12,75 @@ declare namespace mets="http://www.loc.gov/METS/";
 declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
+declare %templates:wrap function selections:search-results($node as node(), $model as map(*),
+                                                     $where as xs:string?, $matchtype as xs:string?,
+                                                     $querystring as xs:string?)
+as map(*)?
+{
+    let $query-root      := "collection('" || $config:transcript-root || "')"
+    let $where-predicate :=
+                            if ($where = 'any') then
+                                "//tei:relatedItem[@type='constituent']"
+                            else if ($where = 'title') then
+                                "/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct//tei:title"
+                            else if ($where = 'byline') then
+                                "/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct//tei:persName"
+                            else if ($where = 'full text') then
+                                "/tei:TEI/tei:text/tei:body"
+                            else ()
+
+    let $query-predicate := "[ft:query(., '" || $querystring ||  "')]" 
+    
+    let $query           := $query-root || $where-predicate || $query-predicate
+    let $hits            := if ($querystring) then util:eval($query) else ()
+    
+    return
+     map { "where" : $where-predicate, "matchtype" : $matchtype, "querystring" : $query-predicate, "query": $query, "hits": $hits }    
+
+};
+declare %templates:wrap function selections:search-results-old($node as node(), $model as map(*),
+                                                     $where as xs:string?, $matchtype as xs:string?,
+                                                     $querystring as xs:string?)
+as map(*)?
+{
+    let $query-root      := "collection('" || $config:transcript-root || "')"
+    let $where-predicate :=
+                            if ($where = 'any') then
+                                "/tei:TEI/(tei:teiHeader|tei:text/tei:body)"
+                            else if ($where = 'title') then
+                                "/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct//tei:title"
+                            else if ($where = 'byline') then
+                                "/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct//tei:persName"
+                            else if ($where = 'full text') then
+                                "/tei:TEI/tei:text"
+                            else ()
+
+    let $query-predicate := "[ft:query(., '" || $querystring ||  "')]" 
+    
+    let $query           := $query-root || $where-predicate || $query-predicate
+    let $hits            := if ($query) then util:eval($query) else ()
+    
+    return
+     map { "where" : $where-predicate, "matchtype" : $matchtype, "querystring" : $query-predicate, "query": $query, "hits": $hits }    
+
+};
+
+declare function selections:display-search-results($node as node(), $model as map(*))
+{
+    <dl>
+        <dt>where</dt><dd>{ $model("where")  }</dd>
+        <dt>matchtype</dt><dd>{ $model("matchtype")  }</dd>
+        <dt>querystring</dt><dd>{ $model("querystring")  }</dd>
+        <dt>query</dt><dd>{ $model("query")  }</dd>
+        <dt>hit count</dt><dd>{ count($model("hits")) }</dd>
+        <dt>hits</dt>
+            <dd>{ for $hit in $model("hits") return $hit }</dd>
+    </dl>,
+    <ul>
+        { for $hit in $model('hits') return <li>{ selections:formatted-item($hit) }</li> }
+    </ul>
+};
+
 
 declare %templates:wrap function selections:selected-items-mods($node as node(), $model as map(*), 
                                                            $query as xs:string?, $byline as xs:string*,
@@ -261,17 +330,19 @@ declare function selections:formatted-item-mods($item as element())
 
 declare function selections:formatted-item($item as element())
 {
-    let $nonSort :=
-        if ($item/tei:biblStruct/tei:analytic/tei:title/tei:seg[@type='nonSort'])
-        then $item/tei:biblStruct/tei:analytic/tei:title/tei:seg[@type='nonSort']/text()
-        else ()
     let $title :=
-        if ($item/tei:biblStruct/tei:analytic/tei:title/tei:seg[@type='main'])
-        then $item/tei:biblStruct/tei:analytic/tei:title/tei:seg[@type='main']/text()
+        if ($item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='main'])
+        then $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='main'][1]/text()
+        else $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/text()
+
+    let $nonSort :=
+        if ($title and $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='nonSort'])
+        then $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='nonSort'][1]/text()
         else ()
+
     let $subtitle :=
-        if ($item/tei:biblStruct/tei:analytic/tei:title/tei:seg[@type='sub'])
-        then string-join((':', $item/tei:biblStruct/tei:analytic/tei:title/tei:seg[@type='sub']/text()), ' ')
+        if ($title and $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='sub'])
+        then string-join((':', $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='sub'][1]/text()), ' ')
         else ()
     let $names :=
         if ($item//tei:persName)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" version="2.0" exclude-result-prefixes="xs xd">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xpath-default-namespace="http://www.tei-c.org/ns/1.0" version="2.0" exclude-result-prefixes="xs xd">
     <xd:doc scope="stylesheet">
         <xd:desc>
             <xd:p>
@@ -22,5 +22,15 @@
     </xsl:template>
     <xsl:template match="tei:lb">
         <br/>
+    </xsl:template>
+    <xsl:template match="title">
+        <xsl:choose>
+            <xsl:when test="seg[@type='sub']">
+                <xsl:value-of select="concat(seg[@type='main'], ': ', xs:string(seg[@type='sub']))"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="seg[@type='main']"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 </xsl:stylesheet>

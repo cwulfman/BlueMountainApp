@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xmlns:local="http://bluemountain.princeton.edu/xsl/titles" version="2.0" exclude-result-prefixes="xs xd mods">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xmlns:local="http://bluemountain.princeton.edu/xsl/titles" version="2.0" exclude-result-prefixes="xs xd mods">
     <xsl:import href="mods.xsl"/>
+    <xsl:import href="tei.xsl"/>
     <xsl:output method="html"/>
     <xsl:param name="app-root"/>
     <xd:doc scope="stylesheet">
@@ -15,6 +16,11 @@
     <xsl:template match="mods:mods">
         <span class="titleInfo">
             <xsl:value-of select="mods:use-title(., 'full')"/>
+        </span>
+    </xsl:template>
+    <xsl:template match="tei:TEI">
+        <span class="titleInfo">
+            <xsl:apply-templates select="tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:title[@level='j']"/>
         </span>
     </xsl:template>
 </xsl:stylesheet>

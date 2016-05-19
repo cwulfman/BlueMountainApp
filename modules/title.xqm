@@ -9,23 +9,37 @@ import module namespace issue="http://bluemountain.princeton.edu/modules/issue" 
 
 declare namespace mets="http://www.loc.gov/METS/";
 declare namespace mods="http://www.loc.gov/mods/v3";
+declare namespace tei="http://www.tei-c.org/ns/1.0";
+
 declare namespace xlink="http://www.w3.org/1999/xlink";
 
+declare function title:title-doc($id as xs:string)
+as element()
+{
+    collection($config:transcript-root)//tei:TEI[tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type='bmtnid'] = $id]
+};
+
+declare function title:docID($teiDoc as element())
+as xs:string
+{
+    $teiDoc/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type='bmtnid']
+};
 
 declare %templates:wrap function title:selected-title($node as node(), $model as map(*), $titleURN as xs:string?)
 as map(*)? 
 {
     if ($titleURN) then
-        let $titleRec := collection($config:data-root)//mods:identifier[@type='bmtn' and . = $titleURN]/ancestor::mods:mods
+        let $titleRec := title:title-doc($titleURN)
         return map { "selected-title" := $titleRec }    
      else ()
 };
+
 
 declare function title:icon($node as node(), $model as map(*))
 as element()*
 {
     let $selected-title := $model("selected-title")
-    let $bmtnid := fn:tokenize($selected-title/mods:identifier[@type='bmtn'], ':')[last()]
+    let $bmtnid := title:docID($selected-title)
     let $path-to-icon := "/exist/rest/" || $config:app-root || "/resources/icons/periodicals"
 
     return 
@@ -58,7 +72,17 @@ as xs:string
             "No abstract available"
 };
 
-declare function title:issues($node as node(), $model as map(*))
+declare function title:issues-tei($node as node(), $model as map(*))
+as map(*)
+{
+    let $titleURN := $model("selected-title")//tei:publicationStmt/tei:idno
+    let $issues := collection('/db/bmtn-data/transcriptions')//tei:relatedItem[@type='host' and @target= "urn:PUL:bluemountain:" ||$titleURN]/ancestor::tei:TEI
+
+    return map { "selected-title-issues" := $issues }
+};
+
+
+declare function title:issues-mods($node as node(), $model as map(*))
 as map(*)
 {
     let $titleURN := $model("selected-title")/mods:identifier[@type='bmtn']
@@ -134,7 +158,49 @@ as element()
         <a href="{app:veridian-title-url-from-bmtnid($titleURN)}">Browse title in the archive</a>
 };
 
-declare function title:issue-listing($node as node(), $model as map(*))
+
+declare function title:issue-listing-tei($node as node(), $model as map(*))
+as element()*
+{
+    <ol class="list-inline"> {
+      for $issue in $model("selected-title-issues")
+        let $issueURN   := xs:string($issue/tei:teiHeader//tei:idno[@type='bmtnid'])
+        let $titleURN   := xs:string($issue//tei:relatedItem[@type='host']/@target)
+        let $imprint    := $issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint
+        let $vollabel   := xs:string($imprint/tei:biblScope[@unit='vol'])
+        let $issuelabel := xs:string($imprint/tei:biblScope[@unit='vol'])
+        let $date       := xs:string($imprint/tei:date/@when)
+        let $thumbURL  := issue:thumbnailURL-tei($issueURN)
+        let $viewer    := "issue" (: choose between "issue", "uv-viewer", and "mirador-viewer" :)
+      order by xs:dateTime(app:w3cdtf-to-xsdate($date))
+      return
+          <li>
+        <dl>
+        <dt>
+        
+        <a href="{$viewer}.html?titleURN={$titleURN}&amp;issueURN={ $issueURN }" class="thumbnail">
+        <img class="img-thumbnail" src="{$thumbURL}" alt="thumbnail"  />
+        </a>
+         </dt>
+         <dd>
+        <dl class="dl-horizontal">
+        <dt>Date</dt>
+        <dd>{$date}</dd>
+        
+        <dt>Volume</dt>
+        <dd>{$vollabel}</dd>
+        
+        <dt>Issue</dt>
+        <dd>{$issuelabel}</dd>
+        </dl>
+    </dd>
+    </dl>
+
+    </li>
+    } </ol>
+};
+
+declare function title:issue-listing-mods($node as node(), $model as map(*))
 as element()*
 {
     <ol class="list-inline"> {
@@ -145,7 +211,7 @@ as element()*
         let $issuelabel := $issue/mods:part[@type='issue']/mods:detail[@type='number']/mods:number
         let $date       := $issue/mods:originInfo/mods:dateIssued[@keyDate='yes']
         let $thumbURL  := issue:thumbnailURL($issue)
-        let $viewer    := "mirador-viewer" (: choose between "issue" and "mirador-viewer" :)
+        let $viewer    := "mirador-viewer" (: choose between "issue", "uv-viewer", and "mirador-viewer" :)
     order by xs:dateTime(app:w3cdtf-to-xsdate($date))
     return
    
@@ -217,6 +283,30 @@ declare function title:issue-count($node as node(), $model as map(*))
 as xs:integer 
 { count($model("selected-title-issues")) };
 
+
+declare function title:size-chart-script-tei($node as node(), $model as map(*))
+{
+    let $issues := $model("selected-title-issues")
+    let $issuedata :=
+        for $issue in $issues
+            let $date := xs:string($issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint/tei:date/@when)
+            let $pagecount := count($issue/tei:facsimile/tei:surface)
+            return
+                <issue>
+                    <date>{ xs:string($date) }</date>
+                    <pagecount>{ $pagecount }</pagecount>
+                </issue>
+     
+    let $xsl := doc("../springs/serial_works/resources/xsl/toJSON.xsl")
+    return 
+        <script type = "text/javascript">
+        var data = google.visualization.arrayToDataTable(
+            { transform:transform($issuedata, $xsl, ()) }
+            );
+            
+    </script>
+};
+
 declare function title:size-chart-script($node as node(), $model as map(*))
 {
     let $issues := $model("selected-title-issues")
@@ -267,6 +357,55 @@ declare function title:contributor-table($node as node(), $model as map(*))
     let $unknown-rows :=
         for $person in $unknown-contributors
             let $count := count($contributors[mods:displayForm = $person])
+            let $label := $person
+            let $link := ()
+            order by $count descending
+            return
+                <tr>
+                    <td>{ $label }</td>
+                   <td><a href="{$link}">{ $count }</a></td>  
+                </tr>
+     let $rows := ($known-rows,$unknown-rows)
+           
+    
+    return 
+        <table class="table">
+        <caption>Contributors</caption>
+        <thead>
+           <tr>
+             <th>Contributor</th>
+             <th>No. of Contributions</th>
+           </tr>
+         </thead>
+         <tbody>
+         {
+            for $row in $rows
+            order by xs:int($row//td[2]/a) descending
+            return $row
+          }
+         </tbody>
+        </table>
+};
+
+declare function title:contributor-table-tei($node as node(), $model as map(*))
+{
+    let $contributors := $model('contributors')
+    let $titleURN := $model("selected-title")//tei:publicationStmt/tei:idno
+    let $known-contributor-ids := distinct-values($contributors/@ref)
+    let $unknown-contributors := distinct-values($contributors[empty(@ref)])
+    let $known-rows :=
+        for $authid in $known-contributor-ids
+            let $count  := count($contributors[@ref = $authid])
+            let $label :=  $contributors[@ref = $authid][1]/text()
+            let $link  := 'contributions.html?titleURN=' || $titleURN || '&amp;authid=' || $authid
+            return
+                <tr>
+                    <td>{ $label }</td>
+                    <td><a href="{$link}">{ $count }</a></td>
+                </tr>
+    let $unknown-rows :=
+        for $person in $unknown-contributors
+            let $count := count($contributors[. = $person])
             let $label := $person
             let $link := ()
             order by $count descending

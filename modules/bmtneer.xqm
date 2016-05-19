@@ -9,6 +9,8 @@ import module namespace issue="http://bluemountain.princeton.edu/modules/issue" 
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace xlink="http://www.w3.org/1999/xlink";
+declare namespace tei="http://www.tei-c.org/ns/1.0";
+
 
 declare %templates:wrap function bmtneer:bylines($node as node(), $model as map(*))
 as map(*)
@@ -67,6 +69,16 @@ as map(*)
     let $issues := collection($config:data-root)//mods:mods[./mods:relatedItem[@type='host' and @xlink:href = $titleid]]
     let $names := $issues//mods:relatedItem[@type='constituent']//mods:name
     let $viafids := $names/@valueURI
+    return
+        map { 'contributors' := $names }
+};
+
+
+declare function bmtneer:contributors-tei($node as node(), $model as map(*))
+as map(*)
+{
+    let $issues := $model("selected-title-issues")
+    let $names := $issues//tei:relatedItem[@type='constituent']//tei:respStmt[tei:resp='cre']/tei:persName
     return
         map { 'contributors' := $names }
 };

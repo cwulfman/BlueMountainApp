@@ -11,6 +11,21 @@ declare namespace mets="http://www.loc.gov/METS/";
 declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
+declare function issue:uv-embed($node as node(), $model as map(*), $manifest as xs:string?)
+as element()
+{
+    let $mets    := $model("selected-issue")/ancestor::mets:mets
+    let $bmtnid  := substring-after($mets//mods:mods//mods:identifier[@type='bmtn'], 'urn:PUL:bluemountain:')
+    let $manifestURI :=
+        xmldb:encode(concat('http%3A%2F%2Flibservdhc2.princeton.edu%3A8080%2Fexist%2Frestxq%2Fsprings%2Fiiif%2F', $bmtnid, '%2Fmanifest.json'))
+    let $uvURI := concat('http://lib-staff373.princeton.edu:8001/examples?manifest=', $manifestURI)
+    return
+    <div id="app">
+        <iframe style="width:1000px; height:900px"
+         src="{$uvURI}"/>
+    </div>
+};
+
 declare function issue:mirador-script($node as node(), $model as map(*), $issueURN as xs:string?)
 as element()
 {
@@ -198,6 +213,12 @@ as xs:string
     let $identifier := replace(substring-after(xs:string($firstPage/mets:FLocat/@xlink:href), 'file:///usr/share/BlueMountain/'), '/', '%2F')
     let $uri := string-join((string-join(($scheme,$server,$prefix,$identifier,$region,$size,$rotation,$quality), '/'), $format), '.')
     return $uri
+};
+
+declare function issue:thumbnailURL-tei($issueid as xs:string)
+as xs:string
+{
+    app:image-url($issueid, '0001.jp2')
 };
 
 declare %templates:wrap function issue:label($node as node(), $model as map(*))

@@ -116,7 +116,7 @@ as xs:string
         $host     := "libimages.princeton.edu",
         $service  := "loris2",
         $region   := "full",
-        $size     := "360,",
+        $size     := "120,",
         $rotation := "0",
         $quality  := "default",
         $format   := "png"
