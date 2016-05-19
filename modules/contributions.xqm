@@ -6,6 +6,7 @@ import module namespace templates="http://exist-db.org/xquery/templates" ;
 import module namespace config="http://bluemountain.princeton.edu/config" at "config.xqm";
 import module namespace app="http://bluemountain.princeton.edu/modules/app" at "app.xql";
 import module namespace kwic="http://exist-db.org/xquery/kwic";
+import module namespace title="http://bluemountain.princeton.edu/modules/title" at "title.xqm";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace mets="http://www.loc.gov/METS/";
@@ -26,6 +27,20 @@ as map(*)
         map { 'contributor' : $authid, 'contributions' : $constituents, 'selected-title' : $titleRec }
 };
 
+
+declare function contributions:contributions-tei($node as node(), $model as map(*), $titleURN as xs:string, $authid as xs:string)
+as map(*)
+{
+    let $titleRec :=
+        if ($titleURN) then
+            title:title-doc($titleURN)
+        else ()
+    let $issues := collection('/db/bmtn-data/transcriptions')//tei:relatedItem[@type='host' and @target= "urn:PUL:bluemountain:" ||$titleURN]/ancestor::tei:TEI
+    let $constituents := $issues//tei:relatedItem[@type='constituent' and .//tei:persName/@ref = $authid]
+    return
+        map { 'contributor' : $authid, 'contributions' : $constituents, 'selected-title' : $titleRec }
+};
+
 declare function contributions:count($node as node(), $model as map(*))
 {
     count($model('contributions'))
@@ -39,6 +54,12 @@ declare function contributions:contributor($node as node(), $model as map(*))
 declare function contributions:magazine($node as node(), $model as map(*))
 {
     $model('selected-title')/mods:titleInfo[1]/mods:title[1]/text()
+};
+
+
+declare function contributions:magazine-tei($node as node(), $model as map(*))
+{
+    title:selected-title-label($node, $model)
 };
 
 declare
@@ -75,6 +96,32 @@ function contributions:table($node as node(), $model as map(*))
                 let $issueid := xs:string($contribution/ancestor::mods:mods/mods:identifier[@type='bmtn'])
                 let $date    := xs:string($contribution/ancestor::mods:mods/mods:originInfo/mods:dateIssued[@keyDate='yes'])
                 let $id      := $contribution/@ID
+                let $label   := $title || '  (' || $date || ')'
+                let $link    := 'contribution.html?issueid=' || $issueid || '&amp;constid=' || $id
+                order by $date
+                return
+                    <tr>
+                        <td><a href="{$link}">{ $title }</a></td>
+                        <td>{ $date  }</td>
+                    </tr>
+            }
+        </table>
+};
+
+
+declare
+    %templates:wrap
+function contributions:table-tei($node as node(), $model as map(*))
+{
+    let $contributions := $model('contributions')
+    return
+        <table class="table">
+            {
+                for $contribution in $contributions
+                let $title   := xs:string($contribution/tei:biblStruct/tei:analytic/tei:title[@level='a'])
+                let $issueid := xs:string(title:docID($contribution/ancestor::tei:TEI))
+                let $date    := xs:string($contribution/ancestor::tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc//tei:biblStruct//tei:imprint//tei:date/@when)
+                let $id      := $contribution/@xml:id
                 let $label   := $title || '  (' || $date || ')'
                 let $link    := 'contribution.html?issueid=' || $issueid || '&amp;constid=' || $id
                 order by $date

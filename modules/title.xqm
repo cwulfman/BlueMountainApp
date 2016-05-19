@@ -48,17 +48,22 @@ as element()*
     
 };
 
-
-declare %templates:wrap function title:label($node as node(), $model as map(*))
+declare function title:label($titlerec as node())
 as element()
 {
-    let $selected-title := $model("selected-title")
     let $xsl := doc($config:app-root || "/resources/xsl/title.xsl")
     let $xslt-parameters := 
         <parameters>
             <param name="context" value="selected-title-label"/>
         </parameters>
-    return transform:transform($selected-title, $xsl, $xslt-parameters)
+    return transform:transform($titlerec, $xsl, $xslt-parameters)
+};
+
+declare %templates:wrap function title:selected-title-label($node as node(), $model as map(*))
+as element()
+{
+    title:label($model("selected-title"))
+
 };
 
 declare %templates:wrap function title:abstract($node as node(), $model as map(*))
