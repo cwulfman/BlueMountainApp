@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article xmlns="http://www.w3.org/1999/xhtml" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
+    <header>
+        <h2>Search Form Mockups</h2>
+        <p>The following forms are non functional.</p>
+    </header>
+    <section>
+        <header>
+            <h3>Simple Searchbox</h3>
+            <p>Users expect a search box on every page. This form sits in the upper right-hand
+                corner, in the navigation bar, and enables a user to search for terms in all
+                metadata fields and in full text. Simple, simple, simple.</p>
+        </header>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <form class="navbar-form navbar-right">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="simplesearch1" placeholder="search terms"/>
+                    </div>
+                    <button type="submit" class="btn btn-default">Search</button>
+                </form>
+            </div>
+        </nav>
+    </section>
+    <section>
+        <header>
+            <h3>Advanced Search</h3>
+            <p>There are <em>many</em> designs for advanced search forms; this one is modeled on one
+                at the <a href="http://dl.acm.org/advsearch.cfm">ACM Digital Library</a>
+            </p>
+        </header>
+        <div class="container">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="where">Where</label>
+                    <select class="form-control" id="where">
+                        <option>any field</option>
+                        <option>title</option>
+                        <option>byline</option>
+                        <option>full text</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select class="form-control">
+                        <option>matches all</option>
+                        <option>matches any</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="advancedsearch1">of the following words or phrases: </label>
+                    <input type="text" class="form-control" id="advancedsearch1" placeholder="search terms" style="width:30%"/>
+                </div>
+                <button type="submit" class="btn btn-default">Search</button>
+            </form>
+        </div>
+    </section>
+    <section>
+        <header>
+            <h3>Faceted Search Refinement</h3>
+        </header>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <form>
+                        <label>Narrow your results by:</label>
+                        <fieldset>
+                            <legend>where terms appear</legend>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <span class="badge">40</span>
+                                    <input type="checkbox" name="foundin" value="metadata"/>Metadata
+                    </li>
+                                <li class="list-group-item">
+                                    <span class="badge">20</span>
+                                    <input type="checkbox" name="foundin" value="fulltext"/>Full Text   
+                    </li>
+                            </ul>
+                        </fieldset>
+                        <fieldset>
+                            <legend>language of contribution</legend>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <span class="badge">40</span>
+                                    <input type="checkbox" name="language" value="german"/>German
+                    </li>
+                                <li class="list-group-item">
+                                    <span class="badge">23</span>
+                                    <input type="checkbox" name="language" value="french"/>French   
+                    </li>
+                                <li class="list-group-item">
+                                    <span class="badge">5</span>
+                                    <input type="checkbox" name="language" value="english"/>English   
+                    </li>
+                                <li class="list-group-item">
+                                    <span class="badge">1</span>
+                                    <input type="checkbox" name="language" value="italian"/>Italian   
+                    </li>
+                            </ul>
+                        </fieldset>
+                        <fieldset>
+                            <legend>magazine</legend>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <span class="badge">31</span>
+                                    <input type="checkbox" name="magazine" value="action"/>Der Sturm
+                    </li>
+                                <li class="list-group-item">
+                                    <span class="badge">5</span>
+                                    <input type="checkbox" name="magazine" value="291"/>291   
+                    </li>
+                                <li class="list-group-item">
+                                    <span class="badge">3</span>
+                                    <input type="checkbox" name="magazine" value="dada"/>Dada   
+                    </li>
+                                <li class="list-group-item">
+                                    <span class="badge">1</span>
+                                    <input type="checkbox" name="magazine" value="broom"/>Broom   
+                    </li>
+                                <li class="list-group-item">
+                                    <span class="badge">1</span>
+                                    <input type="checkbox" name="magazine" value="surr"/>Surrealisme   
+                    </li>
+                            </ul>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</article>
