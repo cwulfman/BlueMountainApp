@@ -34,20 +34,6 @@ as map(*)?
      else ()
 };
 
-
-declare function title:icon($node as node(), $model as map(*))
-as element()*
-{
-    let $selected-title := $model("selected-title")
-    let $bmtnid := title:docID($selected-title)
-    let $path-to-icon := "/exist/rest/" || $config:app-root || "/resources/icons/periodicals"
-
-    return 
-        <img src="{string-join(($path-to-icon, $bmtnid, 'large.jpg'), '/')}"
-             alt="icon" />
-    
-};
-
 declare function title:label($titlerec as node())
 as element()
 {
@@ -69,7 +55,7 @@ as element()
 declare %templates:wrap function title:abstract($node as node(), $model as map(*))
 as xs:string
 {
-    let $abstract := $model("selected-title")/mods:abstract
+    let $abstract := $model("selected-title")//tei:front/tei:div[@type='abstract']
     return
         if ($abstract) then
             xs:string($abstract)
@@ -174,7 +160,7 @@ as element()*
         let $imprint    := $issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint
         let $vollabel   := xs:string($imprint/tei:biblScope[@unit='vol'])
         let $issuelabel := xs:string($imprint/tei:biblScope[@unit='vol'])
-        let $date       := xs:string($imprint/tei:date/@when)
+        let $date       := xs:string($imprint[1]/tei:date[1]/@when)
         let $thumbURL  := issue:thumbnailURL-tei($issueURN)
         let $viewer    := "issue" (: choose between "issue", "uv-viewer", and "mirador-viewer" :)
       order by xs:dateTime(app:w3cdtf-to-xsdate($date))
@@ -294,7 +280,7 @@ declare function title:size-chart-script-tei($node as node(), $model as map(*))
     let $issues := $model("selected-title-issues")
     let $issuedata :=
         for $issue in $issues
-            let $date := xs:string($issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint/tei:date/@when)
+            let $date := xs:string($issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct[1]/tei:monogr[1]/tei:imprint[1]/tei:date[1]/@when)
             let $pagecount := count($issue/tei:facsimile/tei:surface)
             return
                 <issue>
