@@ -12,12 +12,11 @@
                 <xd:b>Author:</xd:b> cwulfman</xd:p>
             <xd:p/>
         </xd:desc>
-    </xd:doc>
-    <xsl:template match="mods:mods">
+    </xd:doc><!--    <xsl:template match="mods:mods">
         <span class="titleInfo">
             <xsl:value-of select="mods:use-title(., 'full')"/>
         </span>
-    </xsl:template>
+    </xsl:template>-->
     <xsl:template match="tei:TEI">
         <span class="titleInfo">
             <xsl:apply-templates select="tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:title[@level='j']"/>

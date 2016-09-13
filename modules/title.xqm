@@ -67,7 +67,9 @@ declare function title:issues-tei($node as node(), $model as map(*))
 as map(*)
 {
     let $titleURN := $model("selected-title")//tei:publicationStmt/tei:idno
-    let $issues := collection('/db/bmtn-data/transcriptions')//tei:relatedItem[@type='host' and @target= "urn:PUL:bluemountain:" ||$titleURN]/ancestor::tei:TEI
+(:    let $issues := collection('/db/bmtn-data/transcriptions')//tei:relatedItem[@type='host' and @target= "urn:PUL:bluemountain:" ||$titleURN]/ancestor::tei:TEI
+:)
+    let $issues := collection('/db/bmtn-data/transcriptions')//tei:relatedItem[@type='host' and @target= $titleURN]/ancestor::tei:TEI
 
     return map { "selected-title-issues" := $issues }
 };

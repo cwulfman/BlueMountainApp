@@ -5,7 +5,27 @@
             <h1 id="magazine-title">
                 <span data-template="issue:label">Broom</span>
             </h1>
-            <dl class="dl-horizontal" data-template="issue:pubInfo">
+            <div class="folioline">
+                <div class="row" style="padding-bottom: 20px;">
+                    <div class="col-md-4 issue-volume">
+                        <span data-template="issue:volume"/>
+                    </div>
+                    <div class="col-md-4 issue-date" style="text-align: center;">
+                        <span data-template="issue:pubDate"/>
+                    </div>
+                    <div class="col-md-4 issue-number" style="text-align: right;">
+                        <span data-template="issue:number"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 issue-editors">
+                        <span data-template="issue:editors"/>
+                    </div>
+                    <div class="col-md-6 issue-pubplace" style="text-align: right;">
+                        <span data-template="issue:pubPlace"/>
+                    </div>
+                </div>
+            </div><!--            <dl class="dl-horizontal" data-template="issue:pubInfo">
                 <dt>Volume</dt>
                 <dd>
                     <span data-template="issue:volume">Volume 1</span>
@@ -23,7 +43,7 @@
                 <dt>Place of Publication</dt>
                 <dd>18, Trinità dei Monti, Rome (6), Italy and Three East 9th Street, New York New
                     York</dd>
-            </dl>
+            </dl>-->
             <div id="tabs">
                 <ul>
                     <li>

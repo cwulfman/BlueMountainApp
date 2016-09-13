@@ -37,7 +37,7 @@ as xs:integer
 declare function titles:listing($node as node(), $model as map(*))
 as element()*
 {
-    let $xsl := doc($config:app-root || "/resources/xsl/titles.xsl")
+    let $xsl := doc($config:app-root || "/resources/xsl/titles-table.xsl")
 	return
 	
 	   

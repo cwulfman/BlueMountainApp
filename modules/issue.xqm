@@ -76,7 +76,18 @@ as map(*)?
     return map { "selected-issue-transcription" := $transcription }
 };
 
-declare %templates:wrap function issue:selected-issue($node as node(), $model as map(*), $issueURN as xs:string?)
+(: Modifies issue:selected-issue-transcription and replaces mods version below. Can both of those be removed? :)
+declare function issue:selected-issue($node as node(), $model as map(*), $issueURN as xs:string?)
+as map(*)?
+{
+    if ($issueURN) then
+    let $transcription := 
+    collection($config:transcript-root)/tei:TEI[tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type='bmtnid'] = $issueURN]
+    return map { "selected-issue" := $transcription }
+    else ()
+};
+
+declare %templates:wrap function issue:selected-issue-mods($node as node(), $model as map(*), $issueURN as xs:string?)
 as map(*)? 
 {
     if ($issueURN) then
@@ -85,47 +96,7 @@ as map(*)?
      else ()
 };
 
-declare %templates:wrap function issue:pubInfo-old($node as node(), $model as map(*), $issueURN as xs:string?)
-as element()
-{
-    let $issue := $model("selected-issue")
-    return
-        <dl class="dl-horizontal">
-        {
-            if ($issue/mods:part[@type='issue']/mods:detail[@type='volume']) then
-              (<dt>Volume</dt>,
-               <dd> { string($issue/mods:part[@type='issue']/mods:detail[@type='volume']/mods:number[1]) }</dd>
-              )
-             else ()
-        }
-        {
-            if ($issue//mods:part[@type='issue']/mods:detail[@type='number']) then
-            (<dt>Number</dt>,<dd>{ string($issue//mods:part[@type='issue']/mods:detail[@type='number']/mods:number[1]) }</dd>)
-            else ()
-        }
-        {
-            if ($issue/mods:originInfo/mods:dateIssued[@keyDate='yes']) then
-            (<dt>Publication Date</dt>,<dd>{ string($issue//mods:originInfo/mods:dateIssued[@keyDate='yes']) }</dd>)
-            else ()
-        }
-        {
-            if ($issue/mods:originInfo/mods:place) then
-            (<dt>Place(s) of Publication</dt>,
-             <dd>{ string-join($issue/mods:originInfo/mods:place, '; ') }</dd>)
-            else ()
-        }
-        {
-            if ($issue/mods:name[./mods:role/mods:roleTerm = 'edt']) then
-            (<dt>Editor(s)</dt>,
-             <dd>{ string-join($issue/mods:name[./mods:role/mods:roleTerm = 'edt']/mods:displayForm, '; ') }</dd>)
-            else ()
-        }
-        
-    </dl>
-};
-
-
-declare %templates:wrap function issue:pubInfo($node as node(), $model as map(*), $issueURN as xs:string?)
+declare %templates:wrap function issue:pubInfo-mods($node as node(), $model as map(*), $issueURN as xs:string?)
 as element()
 {
     let $issue := $model("selected-issue")
@@ -225,12 +196,14 @@ declare %templates:wrap function issue:label($node as node(), $model as map(*))
 as element()
 {
     let $selected-issue := 
-        if (empty($model("selected-issue")))
-        then ()
+        if (empty($model)) then fn:error(xs:QName("app:noModel"), "no model", $model)
+        else if (empty($model("selected-issue")))
+        then fn:error(xs:QName("app:noSelectedIssueError"), "no selected issue", $model)
         else $model("selected-issue")
+    let $issue-title := $selected-issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:title
     let $xsl := doc($config:app-root || "/resources/xsl/issue.xsl")
 
-    return transform:transform($selected-issue, $xsl, ())
+    return transform:transform($issue-title, $xsl, ())
 };
 
 
@@ -238,22 +211,40 @@ declare function issue:volume($node as node(), $model as map(*))
 as xs:string*
 {
     let $issue := $model("selected-issue")
-    let $label := string($issue/mods:part[@type='issue']/mods:detail[@type='volume']/mods:number[1])
-    return $label
+    let $volume := $issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint/tei:biblScope[@unit='vol']
+    return string($volume)
 };
 
 declare function issue:number($node as node(), $model as map(*))
 as xs:string*
 {
     let $issue := $model("selected-issue")
-    return  string($issue//mods:part[@type='issue']/mods:detail[@type='number']/mods:number[1])
+    let $number := $issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint/tei:biblScope[@unit='issue']
+    return string($number)
 };
 
 declare function issue:pubDate($node as node(), $model as map(*))
 as xs:string*
 {
     let $issue := $model("selected-issue")
-    return string($issue//mods:originInfo/mods:dateIssued[@keyDate='yes'])
+    let $pubDate := $issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint/tei:date/@when
+    return string($pubDate)
+};
+
+declare function issue:pubPlace($node as node(), $model as map(*))
+as xs:string*
+{
+    let $issue := $model("selected-issue")
+    let $pubPlace := $issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint/tei:pubPlace
+    return xs:string($pubPlace)    
+};
+
+declare function issue:editors($node as node(), $model as map(*))
+as xs:string*
+{
+    let $issue := $model("selected-issue")
+    let $editors := $issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:respStmt[tei:resp='edt']
+    return string-join(($editors/tei:persName), '; ')
 };
 
 declare %templates:wrap function issue:icon($node as node(), $model as map(*))
