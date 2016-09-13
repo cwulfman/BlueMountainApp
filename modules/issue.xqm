@@ -87,66 +87,10 @@ as map(*)?
     else ()
 };
 
-declare %templates:wrap function issue:selected-issue-mods($node as node(), $model as map(*), $issueURN as xs:string?)
-as map(*)? 
-{
-    if ($issueURN) then
-        let $issueRec := collection($config:data-root)//mods:mods/mods:identifier[@type='bmtn' and . = $issueURN]/ancestor::mods:mods
-        return map { "selected-issue" := $issueRec }    
-     else ()
-};
-
-declare %templates:wrap function issue:pubInfo-mods($node as node(), $model as map(*), $issueURN as xs:string?)
-as element()
-{
-    let $issue := $model("selected-issue")
-    let $volume-detail := $issue/mods:part[@type='issue']/mods:detail[@type='volume']
-    let $number-detail := $issue//mods:part[@type='issue']/mods:detail[@type='number']
-    let $date-issued   := $issue/mods:originInfo/mods:dateIssued[@keyDate='yes']
-    let $pubplace      := $issue/mods:originInfo/mods:place
-    let $editors       := $issue/mods:name[./mods:role/mods:roleTerm = 'edt']
-    return
-        <div class="folioline">
-        <div class="row" style="padding-bottom: 20px;">
-            <div class="col-md-4">
-            {
-                if ($number-detail) then
-                (<span class="folio-label">Number </span>, <span>{ string($number-detail/mods:number[1]) }</span>)
-                else ()
-            }
-            
-            </div>
-            <div class="col-md-4" style="text-align: center;">
-            {
-                if ($date-issued) then
-                <span>{ string($date-issued) }</span>
-                else ()
-            }
-            </div>
-            
-            <div class="col-md-4" style="text-align: right;"> {
-              if ($volume-detail) then
-                (<span class="folio-label">Volume </span>, <span>{ string($volume-detail/mods:number[1]) }</span>)
-                else ()  
-            } </div>
-            
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-            { if ($editors) then string-join($editors/mods:displayForm, '; ') else () }
-            </div>
-            <div class="col-md-6">
-            { if ($pubplace) then string-join($pubplace, '; ') else () }
-            </div>
-        </div>
-        </div>
-};
-
-
 declare %templates:wrap function issue:constituents($node as node(), $model as map(*))
 as map(*)
 {
-    map { "selected-issue-constituents" := $model("selected-issue")//mods:relatedItem[@type='constituent'] }    
+    map { "selected-issue-constituents" := $model("selected-issue")//tei:relatedItem[@type='constituent'] }    
 };
 
 declare function issue:thumbnails($node as node(), $model as map(*))
@@ -292,8 +236,8 @@ as element()
 {
     <table class="table" id="constituents-table">{
         
-        let $issueURN := $model("selected-issue")//mods:identifier[@type='bmtn']
-        let $titleURN := $model("selected-issue")//mods:relatedItem[@type='host']/@xlink:href
+        let $issueURN := $model("selected-issue")//tei:idno[@type="bmtnid"]
+        let $titleURN := $model("selected-issue")//tei:relatedItem[@type='host']/@target
         for $constituent in $model("selected-issue-constituents")
         let $xsl := doc($config:app-root || "/resources/xsl/issue.xsl")
         let $xslt-parameters := 
@@ -312,7 +256,7 @@ as element()
 declare %templates:wrap function issue:ms-description($node as node(), $model as map(*))
 as element()?
 { 
-    let $msDesc := $model("selected-issue-transcription")/tei:teiHeader//tei:msDesc
+    let $msDesc := $model("selected-issue")/tei:teiHeader//tei:msDesc
     let $xsl    := doc($config:app-root || "/resources/xsl/msdesc.xsl")
     let $div    := transform:transform($msDesc, $xsl, ())
     return $div
