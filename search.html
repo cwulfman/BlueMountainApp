@@ -6,7 +6,7 @@
             <form class="form-inline" method="get" action="search.html">
                 <div class="form-group">
                     <label for="where">Where</label>
-                    <select class="form-control" id="where" name="where">
+                    <select class="form-control" data-template="templates:form-control" id="where" name="where">
                         <option value="any">any metadata field</option>
                         <option value="title">title</option>
                         <option value="byline">byline</option>
@@ -14,14 +14,14 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <select class="form-control" id="matchtype" name="matchtype">
+                    <select class="form-control" data-template="templates:form-control" id="matchtype" name="matchtype">
                         <option value="all">matches all</option>
                         <option value="any">matches any</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="querystring">of the following words or phrases: </label>
-                    <input type="text" class="form-control" id="querystring" name="querystring" placeholder="search terms" style="width:100%"/>
+                    <input type="text" class="form-control" id="querystring" name="querystring" data-template="templates:form-control" placeholder="search terms" style="width:100%"/>
                 </div>
                 <button type="submit" class="btn btn-default">Search</button>
             </form>

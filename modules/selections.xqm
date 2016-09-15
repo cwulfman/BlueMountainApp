@@ -25,9 +25,11 @@ as map(*)?
                                 "/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct//tei:title"
                             else if ($where = 'byline') then
                                 "/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct//tei:persName"
-                            else if ($where = 'full text') then
-                                "/tei:TEI/tei:text/tei:body"
+                            else if ($where = 'fulltext') then
+                                "/tei:TEI/tei:text/tei:body//tei:div[@type='TextContent']"
                             else ()
+                            
+    let $fulltextp := if ($where = 'fulltext') then true() else false()
 
     let $query-predicate := "[ft:query(., '" || $querystring ||  "')]" 
     
@@ -35,7 +37,14 @@ as map(*)?
     let $hits            := if ($querystring) then util:eval($query) else ()
     
     return
-     map { "where" : $where-predicate, "matchtype" : $matchtype, "querystring" : $query-predicate, "query": $query, "hits": $hits }    
+     map {  "where" : $where-predicate, 
+            "matchtype" : $matchtype, 
+            "querystring" : $query-predicate, 
+            "query": $query, 
+            "hits": if ($fulltextp) then () else $hits,
+            "ft-hits": if ($fulltextp) then $hits else (),
+            "fulltextp" : $fulltextp
+            }    
 
 };
 declare %templates:wrap function selections:search-results-old($node as node(), $model as map(*),
@@ -73,13 +82,21 @@ declare function selections:display-search-results($node as node(), $model as ma
         <dt>querystring</dt><dd>{ $model("querystring")  }</dd>
         <dt>query</dt><dd>{ $model("query")  }</dd>
         <dt>hit count</dt><dd>{ count($model("hits")) }</dd>
-        <dt>hits</dt>
-            <dd>{ for $hit in $model("hits") return $hit }</dd>
+        <dt>ft-hit count</dt><dd>{ count($model("ft-hits")) }</dd>        
+        <dt>full text?</dt><dd>{ $model("fulltextp") }</dd>
+
     </dl>,
-    <ul>
-        { for $hit in $model('hits') return <li>{ selections:formatted-item($hit) }</li> }
-    </ul>
+    
+     if ($model("fulltextp")) then
+        selections:formatted-fulltext-table($node, $model) 
+        else
+        <ul>
+        { for $hit in $model('hits') return <li>{ selections:formatted-item($hit)}</li> }
+        </ul>
+     
+
 };
+
 
 
 declare %templates:wrap function selections:selected-items-mods($node as node(), $model as map(*), 
@@ -387,6 +404,153 @@ declare function selections:formatted-item($item as element())
         </a>
     </span>
     )
+};
+
+declare function selections:formatted-item-brief($item as element())
+{
+    let $title :=
+        if ($item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='main'])
+        then $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='main'][1]/text()
+        else $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/text()
+
+    let $nonSort :=
+        if ($title and $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='nonSort'])
+        then $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='nonSort'][1]/text()
+        else ()
+
+    let $subtitle :=
+        if ($title and $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='sub'])
+        then string-join((':', $item/tei:biblStruct[1]/tei:analytic[1]/tei:title[1]/tei:seg[@type='sub'][1]/text()), ' ')
+        else ()
+    let $names :=
+        if ($item//tei:persName)
+        then
+            for $name in $item//tei:persName return $name/text()
+        else ()
+   
+    return
+    (<span class="itemTitle">
+        {
+            string-join(($nonSort,$title,$subtitle), ' ')
+        }
+    </span>, <br/>,
+    <span class="names">
+        {
+            string-join($names, ', ')
+        }
+    </span>
+    )
+};
+
+declare function selections:magazine-label($bmtnid as xs:string)
+as xs:string
+{
+    let $magazine := collection('/db/bmtn-data/transcriptions/periodicals')//tei:idno[. = $bmtnid]/ancestor::tei:TEI
+    return xs:string($magazine/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr//tei:title[@level='j'][last()])
+};
+
+declare function selections:issue-label($bmtnid as xs:string)
+as xs:string
+{
+    let $issue-imprint := 
+     collection('/db/bmtn-data/transcriptions/periodicals')//tei:idno[. = $bmtnid]/ancestor::tei:TEI//tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint
+    let $volume :=
+        if ($issue-imprint/tei:biblScope[@unit='vol'])
+        then 
+            for $v in $issue-imprint/tei:biblScope[@unit='vol']
+            return concat("Vol. ", $v)
+        else ()
+    let $number :=
+        if ($issue-imprint/tei:biblScope[@unit='issue'])
+        then 
+            for $i in $issue-imprint/tei:biblScope[@unit='issue']
+            return concat("No. ", $i)
+        else ()
+    let $date := 
+        for $d in $issue-imprint/tei:date
+        return xs:string($d/@when)
+    (: let $issueLink := app:veridian-url-from-bmtnid($journal/mods:identifier[@type='bmtn']) :)
+    let $issueLink := concat('issue.html?issueURN=',$bmtnid)
+        
+    return
+    <span class="imprint">
+        <a href="{$issueLink}">
+        { string-join(($volume,$number), ', ') } ({ $date })
+        </a>
+    </span>
+};
+
+declare function selections:formatted-fulltext-table($node as node(), $model as map(*))
+{
+    for $hit in $model("ft-hits")
+    let $magazine    := xs:string($hit/ancestor::tei:TEI//tei:relatedItem[@type='host']/@target)
+
+    group by $magazine
+    order by $magazine
+    return
+        <div>
+            <h1>{ selections:magazine-label($magazine) }</h1>
+            {
+            for $h2 in $hit
+            let $issue := $h2/ancestor::tei:TEI//tei:idno[@type='bmtnid']
+            group by $issue
+            order by $issue
+            return
+            <div>
+                <h2>{ selections:issue-label($issue) }</h2>
+                {
+                for $h3 in $h2
+                let $constituentid := $h3/@corresp
+                let $item := $h3/ancestor::tei:TEI//tei:relatedItem[@xml:id = $h3/@corresp]
+                let $item-label :=
+                    if ($item) then
+                        selections:formatted-item-brief($item[1])
+                    else <span>no label</span>
+                group by $constituentid
+                order by $constituentid
+                return
+                <div>
+                    <h3 class="item-label">{ $item-label }</h3>
+                    { kwic:summarize($h3[1], <config width="40"/>) }
+                </div>
+                }
+            </div>
+            }
+        </div>
+
+    
+    
+};
+
+
+declare function selections:format-issue-title($journal as element())
+{
+    let $journalTitle :=
+        $journal//tei:title[@level='j'][last()]/tei:seg[@type='main']/text()
+    let $volume :=
+        if ($journal/tei:imprint/tei:biblScope[@unit='vol'])
+        then 
+            for $v in $journal/tei:imprint/tei:biblScope[@unit='vol']
+            return        concat("Vol. ", $v)
+        else ()
+    let $number :=
+        if ($journal/tei:imprint/tei:biblScope[@unit='issue'])
+        then 
+            for $i in $journal/tei:imprint/tei:biblScope[@unit='issue']
+            return concat("No. ", $i)
+        else ()
+    let $date := 
+        for $d in $journal/tei:imprint/tei:date
+        return xs:string($d/@when)
+    (: let $issueLink := app:veridian-url-from-bmtnid($journal/mods:identifier[@type='bmtn']) :)
+    let $issueLink := concat('issue.html?issueURN=',$journal/ancestor::tei:teiHeader/tei:publicationStmt/tei:idno[@type='bmtnid'])
+        
+    return
+    <span class="imprint">
+        <a href="{$issueLink}">
+        { string-join(($journalTitle,$volume,$number), ', ') } ({ $date })
+        </a>
+    </span>
 };
 
 declare  %templates:wrap function selections:full-text-KWIC-old($node as node(), $model as map(*))

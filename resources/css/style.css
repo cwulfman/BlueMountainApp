@@ -127,3 +127,12 @@ span.hi { background: yellow; }
 #msdesc h1, h2, h3, h4 {
     font-size: small;
 }
+
+h3.item-label {
+    font-weight: normal;
+}
+
+h3.item-label span.names {
+    font-style: italic;
+    font-size: smaller;
+}
