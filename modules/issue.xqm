@@ -50,7 +50,8 @@ as element()
 declare function issue:pages-script($node as node(), $model as map(*), $issueURN as xs:string?)
 as element()
 {
-    let $mets    := $model("selected-issue")/ancestor::mets:mets
+(:    let $mets    := $model("selected-issue")/ancestor::mets:mets:)
+    let $mets     := app:mets-from-id(app:tei-issue-id($model("selected-issue")))
     let $pageuris :=
         for $file in $mets//mets:fileGrp[@USE='Images']/mets:file
         return replace(substring-after(xs:string($file/mets:FLocat/@xlink:href), 'file:///usr/share/BlueMountain/'), '/', '%2F')
@@ -236,7 +237,7 @@ as element()
 {
     <table class="table" id="constituents-table">{
         
-        let $issueURN := $model("selected-issue")//tei:idno[@type="bmtnid"]
+        let $issueURN := app:tei-issue-id($model("selected-issue"))
         let $titleURN := $model("selected-issue")//tei:relatedItem[@type='host']/@target
         for $constituent in $model("selected-issue-constituents")
         let $xsl := doc($config:app-root || "/resources/xsl/issue.xsl")

@@ -163,3 +163,17 @@ as xs:string
         
     return $path
 };
+
+declare function app:mets-from-id($issueid as xs:string)
+as element()
+{
+    let $uri-prefix := "urn:PUL:bluemountain"
+    let $modsid     := string-join(($uri-prefix,$issueid), ':')
+    return collection($config:data-root)//mods:identifier[@type='bmtn' and . = $modsid]/ancestor::mets:mets
+};
+
+declare function app:tei-issue-id($issue as element())
+as xs:string
+{
+    $issue/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type='bmtnid']
+};
