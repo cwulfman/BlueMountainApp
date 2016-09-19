@@ -74,8 +74,11 @@ as map(*)?
 
 };
 
-declare function selections:display-search-results($node as node(), $model as map(*))
+declare 
+%templates:default("debug", "false")
+function selections:display-search-results($node as node(), $model as map(*), $debug as xs:string)
 {
+    if ($debug = 'true') then
     <dl>
         <dt>where</dt><dd>{ $model("where")  }</dd>
         <dt>matchtype</dt><dd>{ $model("matchtype")  }</dd>
@@ -84,8 +87,9 @@ declare function selections:display-search-results($node as node(), $model as ma
         <dt>hit count</dt><dd>{ count($model("hits")) }</dd>
         <dt>ft-hit count</dt><dd>{ count($model("ft-hits")) }</dd>        
         <dt>full text?</dt><dd>{ $model("fulltextp") }</dd>
+        <dt>debug?</dt><dd>{ $debug }   </dd>
 
-    </dl>,
+    </dl> else (),
     
      if ($model("fulltextp")) then
         selections:formatted-fulltext-table($node, $model) 
