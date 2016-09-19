@@ -40,7 +40,9 @@
     <xsl:template match="tei:relatedItem[@type = 'constituent']">
         <tr>
             <td>
-                <xsl:apply-templates select="tei:biblStruct/tei:analytic/tei:title"/>
+                <a href="contribution.html?issueid={$issueURN}&amp;constid={@xml:id}">
+                    <xsl:apply-templates select="tei:biblStruct/tei:analytic/tei:title"/>
+                </a>
             </td>
             <td>
                 <xsl:for-each select="tei:biblStruct/tei:analytic/tei:respStmt/tei:persName">
