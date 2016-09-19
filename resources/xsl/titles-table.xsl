@@ -10,6 +10,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:output method="xml" indent="yes" doctype-system="about:legacy-compat"/>
+    <xsl:param name="title-icon"/>
     <xsl:template match="TEI">
         <xsl:apply-templates select="teiHeader/fileDesc/sourceDesc/biblStruct/monogr"/>
     </xsl:template>
@@ -18,6 +19,9 @@
             <xsl:value-of select="current()/ancestor::fileDesc/publicationStmt/idno[@type='bmtnid']"/>
         </xsl:variable>
         <tr>
+            <td>
+                <img class="img-thumbnail" src="{$title-icon}"/>
+            </td>
             <td>
                 <a href="{concat('title.html?titleURN=',$idno)}">
                     <xsl:apply-templates select="title[@level='j']"/>

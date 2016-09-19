@@ -34,6 +34,18 @@ as map(*)?
      else ()
 };
 
+declare function title:icon($titleid as xs:string)
+as xs:string
+{
+    let $issues :=
+        for $i in collection($config:transcript-root)//tei:relatedItem[@type='host' and @target = $titleid]/ancestor::tei:TEI
+        order by $i/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint/tei:date/@when
+        return $i
+        
+    return issue:thumbnailURL-tei(app:tei-issue-id($issues[1]))
+    
+};
+
 declare function title:label($titlerec as node())
 as element()
 {

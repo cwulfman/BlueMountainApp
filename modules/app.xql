@@ -177,3 +177,9 @@ as xs:string
 {
     $issue/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@type='bmtnid']
 };
+
+declare function app:tei-title-id($title as element())
+as xs:string
+{
+    app:tei-issue-id($title)
+};
