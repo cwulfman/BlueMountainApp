@@ -35,6 +35,10 @@ as map(*)?
     
     let $query           := $query-root || $where-predicate || $query-predicate
     let $hits            := if ($querystring) then util:eval($query) else ()
+    let $hits :=
+            if ($where = ('title')) then
+            for $h in $hits return $h/ancestor-or-self::tei:relatedItem
+        else $hits
     
     return
      map {  "where" : $where-predicate, 
@@ -45,32 +49,6 @@ as map(*)?
             "ft-hits": if ($fulltextp) then $hits else (),
             "fulltextp" : $fulltextp
             }    
-
-};
-declare %templates:wrap function selections:search-results-old($node as node(), $model as map(*),
-                                                     $where as xs:string?, $matchtype as xs:string?,
-                                                     $querystring as xs:string?)
-as map(*)?
-{
-    let $query-root      := "collection('" || $config:transcript-root || "')"
-    let $where-predicate :=
-                            if ($where = 'any') then
-                                "/tei:TEI/(tei:teiHeader|tei:text/tei:body)"
-                            else if ($where = 'title') then
-                                "/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct//tei:title"
-                            else if ($where = 'byline') then
-                                "/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct//tei:persName"
-                            else if ($where = 'full text') then
-                                "/tei:TEI/tei:text"
-                            else ()
-
-    let $query-predicate := "[ft:query(., '" || $querystring ||  "')]" 
-    
-    let $query           := $query-root || $where-predicate || $query-predicate
-    let $hits            := if ($query) then util:eval($query) else ()
-    
-    return
-     map { "where" : $where-predicate, "matchtype" : $matchtype, "querystring" : $query-predicate, "query": $query, "hits": $hits }    
 
 };
 
@@ -99,42 +77,6 @@ function selections:display-search-results($node as node(), $model as map(*), $d
         </ul>
      
 
-};
-
-
-
-declare %templates:wrap function selections:selected-items-mods($node as node(), $model as map(*), 
-                                                           $query as xs:string?, $byline as xs:string*,
-                                                           $magazine as xs:string*)
-as map(*)? 
-{
-    let $name-hits  := 
-        if ($query !='')
-            then collection($config:data-root)//mods:relatedItem[ft:query(.//mods:displayForm, $query)]
-         else ()
-    let $title-hits := 
-        if ($query != '')
-        then collection($config:data-root)//mods:relatedItem[ft:query(.//mods:titleInfo, $query)]
-        else ()
-    let $restrictions :=
-        if ($byline != '')
-        then 
-         for $line in $byline return 
-             collection($config:data-root)//mods:relatedItem[ft:query(.//mods:displayForm, $line)]
-        else ()
-    
-    
-    let $query-hits := $name-hits union $title-hits
-    let $hits :=
-        if ($restrictions)
-        then $query-hits intersect $restrictions
-        else $query-hits
-    let $hits :=
-        if ($magazine)
-        then $hits[./ancestor::mods:mods/mods:relatedItem[@type='host']/@xlink:href = $magazine]
-        else $hits
-
-    return map { "selected-items" : $hits, "query" : $query }    
 };
 
 declare %templates:wrap function selections:selected-items($node as node(), $model as map(*), 
@@ -190,82 +132,6 @@ as map(*)?
                  "ft-hits" : $ft-hits }    
 };
 
-declare function selections:foo-mods($node as node(), $model as map(*))
-{
-    <form action="">
-        <label for="thequery">Query Terms: </label>
-        <input name="query" id="query" value="{$model('query')}"/>
-        <br/>
-       <fieldset>
-        <legend>with byline</legend>
-        <ol>
-        {
-           let $names := $model("selected-items")//mods:displayForm
-           let $normalized-names := for $name in $names return normalize-space(lower-case($name))
-           for $name in distinct-values($normalized-names, "?strength=primary") 
-            let $count := count($normalized-names[.= $name])
-            order by $count descending
-            return <li><input type="checkbox" name="byline" value="{$name}">{$name} ({$count})</input></li>  
-        }
-        </ol>
-       </fieldset>
-       <fieldset>
-        <legend>in magazine</legend>
-        <ol>
-            {
-            let $mags := $model("selected-items")/ancestor::mods:mods/mods:relatedItem[@type='host']/@xlink:href
-            for $mag in distinct-values($mags)
-             let $title := collection($config:data-root)//mods:mods[./mods:identifier = $mag]/mods:titleInfo[1]/mods:title[1]/text()
-             let $count := count($mags[.= $mag])
-             order by $count descending
-             return
-                <li><input type="checkbox" name="magazine" value="{$mag}">{$title} ({$count})</input></li>
-            }
-        </ol>
-       </fieldset>
-        <input type="submit" value="Search"/>
-    </form>
-};
-
-declare %templates:wrap function selections:foo($node as node(), $model as map(*))
-{
-    <form action="">
-        <label for="thequery">Query Terms: </label>
-        <input name="query" id="query" value="{$model('query')}"/>
-        <br/>
-       <fieldset>
-        <legend>with byline</legend>
-        
-        <ol>
-        {
-           let $names := $model("selected-items")//tei:persName
-           let $normalized-names := for $name in $names return normalize-space(lower-case($name))
-           for $name in distinct-values($normalized-names, "?strength=primary") 
-            let $count := count($normalized-names[.= $name])
-            order by $count descending
-            return <li><input type="checkbox" name="byline" value="{$name}">{$name} ({$count})</input></li>  
-        }
-        </ol>
-       </fieldset>
-       <fieldset>
-        <legend>in magazine</legend>
-        <ol>
-            {
-            let $mags := $model("selected-items")/ancestor::tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:relatedItem[@type='host']/@target
-                         union
-                         $model("ft-hits")/ancestor::tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:relatedItem[@type='host']/@target
-            for $mag in distinct-values($mags)
-             let $title := collection($config:data-root)//mods:mods[./mods:identifier = $mag]/mods:titleInfo[1]/mods:title[1]/text()
-             let $count := count($mags[.= $mag])
-             order by $count descending
-             return
-                <li><input type="checkbox" name="magazine" value="{$mag}">{$title} ({$count})</input></li>
-            }
-        </ol>
-       </fieldset>
-        <input type="submit" value="Search"/>
-    </form>
-};
 
 
 declare function local:name-link($name as xs:string) as element()
@@ -294,59 +160,6 @@ as element()*
     let $items := $model("selected-items")
    for $item in $items return
                 <li>{ selections:formatted-item($item) }</li>
-};
-
-declare function selections:formatted-item-mods($item as element())
-{
-    let $nonSort :=
-        if ($item/mods:titleInfo/mods:nonSort)
-        then $item/mods:titleInfo/mods:nonSort/text()
-        else ()
-    let $title :=
-        if ($item/mods:titleInfo/mods:title)
-        then $item/mods:titleInfo/mods:title/text()
-        else ()
-    let $subtitle :=
-        if ($item/mods:titleInfo/mods:subTitle)
-        then string-join((':', $item/mods:titleInfo/mods:subTitle/text()), ' ')
-        else ()
-    let $names :=
-        if ($item/mods:name)
-        then
-            for $name in $item/mods:name return $name/mods:displayForm/text()
-        else ()
-    let $journal := $item/ancestor::mods:mods[1]
-    let $journalTitle :=
-        $journal/mods:titleInfo/mods:title/text()
-    let $volume :=
-        if ($journal/mods:part[@type='issue']/mods:detail[@type='volume'])
-        then concat("Vol. ", $journal/mods:part[@type='issue']/mods:detail[@type='volume']/mods:number[1])
-        else ()
-    let $number :=
-        if ($journal/mods:part[@type='issue']/mods:detail[@type='number'])
-        then concat("No. ", $journal/mods:part[@type='issue']/mods:detail[@type='number']/mods:number[1])
-        else ()
-    let $date := $journal/mods:originInfo/mods:dateIssued[@keyDate = 'yes']
-    (: let $issueLink := app:veridian-url-from-bmtnid($journal/mods:identifier[@type='bmtn']) :)
-    let $issueLink := concat('issue.html?issueURN=',$journal/mods:identifier[@type='bmtn'])
-        
-    return
-    (<span class="itemTitle">
-        {
-            string-join(($nonSort,$title,$subtitle), ' ')
-        }
-    </span>, <br/>,
-    <span class="names">
-        {
-            string-join($names, ', ')
-        }
-    </span>, <br/>,
-    <span class="imprint">
-        <a href="{$issueLink}">
-        { string-join(($journalTitle,$volume,$number), ', ') } ({ $date })
-        </a>
-    </span>
-    )
 };
 
 declare function selections:formatted-item($item as element())
