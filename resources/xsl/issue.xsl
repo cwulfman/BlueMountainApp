@@ -47,7 +47,7 @@
                     <span class="persName">
                         <xsl:choose>
                             <xsl:when test="current()/@ref">
-                                <a href="{@ref}">
+                                <a href="contributions.html?titleURN={$titleURN}&amp;authid={@ref}">
                                     <xsl:apply-templates select="current()"/>
                                 </a>
                             </xsl:when>

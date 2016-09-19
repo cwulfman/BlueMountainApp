@@ -36,7 +36,7 @@ as map(*)?
     let $query           := $query-root || $where-predicate || $query-predicate
     let $hits            := if ($querystring) then util:eval($query) else ()
     let $hits :=
-            if ($where = ('title')) then
+            if ($where = ('title', 'byline')) then
             for $h in $hits return $h/ancestor-or-self::tei:relatedItem
         else $hits
     
