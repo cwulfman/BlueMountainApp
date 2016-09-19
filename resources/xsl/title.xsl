@@ -22,4 +22,14 @@
             <xsl:apply-templates select="tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:title[@level='j']"/>
         </span>
     </xsl:template>
+    <xsl:template match="tei:title">
+        <xsl:choose>
+            <xsl:when test="tei:seg[@type='sub']">
+                <xsl:value-of select="concat(tei:seg[@type='main'], ': ', xs:string(tei:seg[@type='sub']))"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="tei:seg[@type='main']"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 </xsl:stylesheet>

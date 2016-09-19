@@ -35,7 +35,7 @@ as map(*)
         if ($titleURN) then
             title:title-doc($titleURN)
         else ()
-    let $issues := collection('/db/bmtn-data/transcriptions')//tei:relatedItem[@type='host' and @target= "urn:PUL:bluemountain:" ||$titleURN]/ancestor::tei:TEI
+    let $issues := title:issues($titleURN)
     let $constituents := $issues//tei:relatedItem[@type='constituent' and .//tei:persName/@ref = $authid]
     return
         map { 'contributor' : $authid, 'contributions' : $constituents, 'selected-title' : $titleRec }
@@ -119,6 +119,7 @@ function contributions:table-tei($node as node(), $model as map(*))
             {
                 for $contribution in $contributions
                 let $title   := xs:string($contribution/tei:biblStruct/tei:analytic/tei:title[@level='a'])
+                let $bylines := $contribution//tei:biblStruct/tei:analytic/tei:respStmt/tei:persName
                 let $issueid := xs:string(title:docID($contribution/ancestor::tei:TEI))
                 let $date    := xs:string($contribution/ancestor::tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc//tei:biblStruct//tei:imprint//tei:date/@when)
                 let $id      := $contribution/@xml:id
@@ -128,6 +129,7 @@ function contributions:table-tei($node as node(), $model as map(*))
                 return
                     <tr>
                         <td><a href="{$link}">{ $title }</a></td>
+                        <td>{ string-join($bylines, '; ') }</td>
                         <td>{ $date  }</td>
                     </tr>
             }

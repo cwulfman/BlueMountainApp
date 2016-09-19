@@ -75,6 +75,12 @@ as xs:string
             "No abstract available"
 };
 
+declare function title:issues($bmtnid as xs:string)
+as element()*
+{
+    collection('/db/bmtn-data/transcriptions')//tei:relatedItem[@type='host' and @target= $bmtnid]/ancestor::tei:TEI
+};
+
 declare function title:issues-tei($node as node(), $model as map(*))
 as map(*)
 {

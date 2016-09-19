@@ -23,14 +23,4 @@
     <xsl:template match="tei:lb">
         <br/>
     </xsl:template>
-    <xsl:template match="title-foo"><!-- This shouldn't work: no namespace! -->
-        <xsl:choose>
-            <xsl:when test="seg[@type='sub']">
-                <xsl:value-of select="concat(seg[@type='main'], ': ', xs:string(seg[@type='sub']))"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="seg[@type='main']"/>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
 </xsl:stylesheet>
