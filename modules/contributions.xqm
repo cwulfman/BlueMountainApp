@@ -12,6 +12,7 @@ declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace mets="http://www.loc.gov/METS/";
 declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
+declare namespace skos = "http://www.w3.org/2004/02/skos/core#";
 
 
 declare function contributions:contributions($node as node(), $model as map(*), $titleURN as xs:string, $authid as xs:string)
@@ -48,7 +49,14 @@ declare function contributions:count($node as node(), $model as map(*))
 
 declare function contributions:contributor($node as node(), $model as map(*))
 {
-    $model('contributor')
+    let $viafid := $model('contributor')
+    let $doc := 
+        if ($viafid) then doc($viafid || '/rdf.xml')
+        else ()
+    let $label :=
+        if ($doc) then $doc//skos:prefLabel[@xml:lang='en-US'][1]
+        else "not found"
+    return xs:string($label)
 };
 
 declare function contributions:magazine($node as node(), $model as map(*))
