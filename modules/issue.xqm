@@ -17,12 +17,12 @@ as element()
     let $bmtnid := app:tei-issue-id($model("selected-issue"))
     
     return
-    <div 
+    <div id="viewer"
         class="uv" 
         data-uri="http://localhost:8080/exist/restxq/iiif/{$bmtnid}/manifest"
         data-collectionindex="0" data-manifestindex="0" data-sequenceindex="0"
         data-canvasindex="0"
-        data-rotation="0" style="width:800px; height:600px; background-color:
+        data-rotation="0" style="height:600px; background-color:
         #000" />
 };
 
