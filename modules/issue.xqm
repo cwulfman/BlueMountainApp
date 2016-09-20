@@ -11,7 +11,22 @@ declare namespace mets="http://www.loc.gov/METS/";
 declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
-declare function issue:uv-embed($node as node(), $model as map(*), $manifest as xs:string?)
+declare function issue:uv-embed($node as node(), $model as map(*))
+as element()
+{
+    let $bmtnid := app:tei-issue-id($model("selected-issue"))
+    
+    return
+    <div 
+        class="uv" 
+        data-uri="http://localhost:8080/exist/restxq/iiif/{$bmtnid}/manifest"
+        data-collectionindex="0" data-manifestindex="0" data-sequenceindex="0"
+        data-canvasindex="0"
+        data-rotation="0" style="width:800px; height:600px; background-color:
+        #000" />
+};
+
+declare function issue:uv-embed-old($node as node(), $model as map(*), $manifest as xs:string?)
 as element()
 {
     let $mets    := $model("selected-issue")/ancestor::mets:mets
