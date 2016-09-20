@@ -105,3 +105,6 @@ declare function config:app-info($node as node(), $model as map(*)) {
             </tr>
         </table>
 };
+
+declare variable $config:springs-root  as xs:string { "http://localhost:8080/exist/restxq/springs" };
+declare variable $config:iiif-root     as xs:string { "http://localhost:8080/exist/restxq/iiif" };
