@@ -149,7 +149,7 @@ as xs:string
 declare function issue:thumbnailURL-tei($issueid as xs:string)
 as xs:string
 {
-    app:image-url($issueid, '0001.jp2')
+    app:image-url($issueid, '0001.jp2', '60')
 };
 
 declare %templates:wrap function issue:label($node as node(), $model as map(*))

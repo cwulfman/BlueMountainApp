@@ -109,14 +109,14 @@ as element()
         else <tei:title>no title</tei:title>
 };
 
-declare function app:image-url($issueid as xs:string, $imgname as xs:string)
+declare function app:image-url($issueid as xs:string, $imgname as xs:string, $requestedSize as xs:string?)
 as xs:string
 {
     let $protocol := "http://",
         $host     := "libimages.princeton.edu",
         $service  := "loris2",
         $region   := "full",
-        $size     := "120,",
+        $size     := if ($requestedSize) then $requestedSize || ',' else "120,",
         $rotation := "0",
         $quality  := "default",
         $format   := "png"

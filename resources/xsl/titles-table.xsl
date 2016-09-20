@@ -16,33 +16,61 @@
     </xsl:template>
     <xsl:template match="monogr">
         <xsl:variable name="idno">
-            <xsl:value-of select="current()/ancestor::fileDesc/publicationStmt/idno[@type='bmtnid']"/>
+            <xsl:value-of select="current()/ancestor::fileDesc/publicationStmt/idno[@type = 'bmtnid']"/>
         </xsl:variable>
         <tr>
             <td>
-                <img class="img-thumbnail" src="{$title-icon}"/>
+                <a href="{concat('title.html?titleURN=',$idno)}">
+                    <img src="{$title-icon}"/>
+                </a>
             </td>
             <td>
                 <a href="{concat('title.html?titleURN=',$idno)}">
-                    <xsl:apply-templates select="title[@level='j']"/>
+                    <span class="sometitle">
+                        <xsl:apply-templates select="title[@level = 'j']"/>
+                    </span>
                 </a>
+                <br/>
+                <span class="abstract">
+                    <xsl:apply-templates select="current()/ancestor::TEI/text/body"/>
+                </span>
             </td>
             <td>
                 <xsl:apply-templates select="imprint/date"/>
             </td>
         </tr>
     </xsl:template>
-    <xsl:template match="title">
+    <xsl:template match="title-old">
         <xsl:choose>
-            <xsl:when test="seg[@type='sub']">
-                <xsl:value-of select="concat(seg[@type='main'], ': ', xs:string(seg[@type='sub']))"/>
+            <xsl:when test="seg[@type = 'sub']">
+                <xsl:value-of select="concat(seg[@type = 'main'], ': ', xs:string(seg[@type = 'sub']))"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="seg[@type='main']"/>
+                <xsl:value-of select="seg[@type = 'main']"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <xsl:template match="title">
+        <xsl:if test="seg[@type = 'nonSort']">
+            <xsl:value-of select="concat(xs:string(seg[@type='nonSort']), ' ')"/>
+        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="seg[@type = 'sub']">
+                <xsl:value-of select="concat(seg[@type = 'main'], ': ', xs:string(seg[@type = 'sub']))"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="seg[@type = 'main']"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
     <xsl:template match="date">
-        <xsl:value-of select="string-join((@from, @to), '-')"/>
+        <xsl:choose>
+            <xsl:when test="@from">
+                <xsl:value-of select="string-join((@from, @to), '-')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="@when"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 </xsl:stylesheet>

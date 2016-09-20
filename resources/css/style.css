@@ -3,7 +3,7 @@ footer .poweredby { float: right; margin: 33px 10px 0 0;}
 footer .poweredby img { width: 120px; }
 footer {margin: 33px 10px 0 0;}
 
-#listing {
+#listing-old {
   max-height: 400px;
   overflow-y: scroll;
 }
@@ -16,7 +16,7 @@ td.title-abstract {
     width: 70%;
 }
 
-
+span.sometitle { font-size: large; }
 
 div.transcription {font-size: smaller;}
 
@@ -49,10 +49,6 @@ td.title-abstract p {
     font-size: larger ;
 }
 
-.thumbnail img{
-
-/*    height:180px;*/
-}
 
 .dl-horizontal dt{
     text-align: left;
