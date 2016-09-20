@@ -179,7 +179,7 @@ as element()*
         let $titleURN   := xs:string($issue//tei:relatedItem[@type='host']/@target)
         let $imprint    := $issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint
         let $vollabel   := xs:string($imprint/tei:biblScope[@unit='vol'])
-        let $issuelabel := xs:string($imprint/tei:biblScope[@unit='vol'])
+        let $issuelabel := xs:string($imprint/tei:biblScope[@unit='issue'])
         let $date       := xs:string($imprint[1]/tei:date[1]/@when)
         let $thumbURL  := issue:thumbnailURL-tei($issueURN)
         let $viewer    := "issue" (: choose between "issue", "uv-viewer", and "mirador-viewer" :)
