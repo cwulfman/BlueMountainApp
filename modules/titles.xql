@@ -15,7 +15,8 @@ as map(*)
 {
     let $titleSequence :=
         for $doc in collection($config:transcript-root)/tei:TEI[tei:teiHeader/tei:profileDesc/tei:textClass/tei:classCode='300215389']
-        order by lower-case(app:use-title-tei($doc))
+        let $sortTitle := $doc/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:title[@level='j']/tei:seg[@type='main'][1]
+        order by lower-case($sortTitle)
         return $doc
     return map { "titles" := $titleSequence }
 };

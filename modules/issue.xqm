@@ -180,7 +180,7 @@ as xs:string*
 {
     let $issue := $model("selected-issue")
     let $number := $issue/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint/tei:biblScope[@unit='issue']
-    return string($number)
+    return string-join($number, ', ')
 };
 
 declare function issue:pubDate($node as node(), $model as map(*))

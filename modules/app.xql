@@ -138,7 +138,7 @@ as xs:string
     return $uri
 };
 
-declare function app:image-path($issueid as xs:string, $imgname as xs:string)
+declare function app:image-path($issueid as xs:string, $imgname-given as xs:string)
 as xs:string
 {
     let $protocol := "http://",
@@ -151,6 +151,12 @@ as xs:string
         $format   := "png"
 
     let $base     := "bluemountain/astore%2Fperiodicals"
+    
+    let $imgname  :=
+        if (starts-with($imgname-given, 'file')) then
+            replace($imgname-given, '.*delivery.*_', '')
+        else
+            $imgname-given
     
     
     let $fulltok  := tokenize($issueid, ':')[last()],
