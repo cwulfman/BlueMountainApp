@@ -126,7 +126,7 @@ function contributions:table-tei($node as node(), $model as map(*))
         <table class="table">
             {
                 for $contribution in $contributions
-                let $title   := xs:string($contribution/tei:biblStruct/tei:analytic/tei:title[@level='a'])
+                let $title   := xs:string($contribution/tei:biblStruct/tei:analytic/tei:title[@level='a'][1])
                 let $bylines := $contribution//tei:biblStruct/tei:analytic/tei:respStmt/tei:persName
                 let $issueid := xs:string(title:docID($contribution/ancestor::tei:TEI))
                 let $date    := xs:string($contribution/ancestor::tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc//tei:biblStruct//tei:imprint//tei:date/@when)
