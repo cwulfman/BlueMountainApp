@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <meta xmlns="http://exist-db.org/xquery/repo">
-    <description>Blue Mountain Springs</description>
+    <description>Blue Mountain App</description>
     <author>cew</author>
     <website/>
-    <status>alpha</status>
+    <status>beta</status>
     <license>GNU-LGPL</license>
     <copyright>true</copyright>
     <type>application</type>
-    <target>bmtnsprings</target>
+    <target>bluemountain</target>
     <prepare>pre-install.xql</prepare>
     <finish/>
 </meta>
