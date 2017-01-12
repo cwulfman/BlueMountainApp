@@ -185,7 +185,7 @@ as element()*
         let $viewer    := "issue" (: choose between "issue", "uv-viewer", and "mirador-viewer" :)
       order by xs:dateTime(app:w3cdtf-to-xsdate($date))
       return
-          <li>
+          <li class="issue-cell">
         <dl>
         <dt>
         
@@ -402,30 +402,17 @@ declare function title:contributor-table-tei($node as node(), $model as map(*))
 {
     let $contributors := $model('contributors')
     let $titleURN := $model("selected-title")//tei:publicationStmt/tei:idno
-    let $known-contributor-ids := distinct-values($contributors/@ref)
-    let $unknown-contributors := distinct-values($contributors[empty(@ref)])
+
+    
     let $known-rows :=
-        for $authid in $known-contributor-ids
-            let $count  := count($contributors[@ref = $authid])
-            let $label :=  $contributors[@ref = $authid][1]/text()
-            let $link  := 'contributions.html?titleURN=' || $titleURN || '&amp;authid=' || $authid
-            return
-                <tr>
-                    <td>{ $label }</td>
-                    <td><a href="{$link}">{ $count }</a></td>
-                </tr>
-    let $unknown-rows :=
-        for $person in $unknown-contributors
-            let $count := count($contributors[. = $person])
-            let $label := $person
-            let $link := ()
-            order by $count descending
-            return
-                <tr>
-                    <td>{ $label }</td>
-                   <td><a href="{$link}">{ $count }</a></td>  
-                </tr>
-     let $rows := ($known-rows,$unknown-rows)
+        for $contributor in $model('contributors')
+        group by $ref := $contributor/@ref
+        return
+            <tr>
+        <td>{ $contributor }</td>    
+            </tr>
+
+     let $rows := $known-rows
            
     
     return 
@@ -440,7 +427,7 @@ declare function title:contributor-table-tei($node as node(), $model as map(*))
          <tbody>
          {
             for $row in $rows
-            order by xs:int($row//td[2]/a) descending
+
             return $row
           }
          </tbody>
