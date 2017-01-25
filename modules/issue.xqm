@@ -26,21 +26,6 @@ as element()
         #000" />
 };
 
-declare function issue:uv-embed-old($node as node(), $model as map(*), $manifest as xs:string?)
-as element()
-{
-    let $mets    := $model("selected-issue")/ancestor::mets:mets
-    let $bmtnid  := substring-after($mets//mods:mods//mods:identifier[@type='bmtn'], 'urn:PUL:bluemountain:')
-    let $manifestURI :=
-        xmldb:encode(concat('http%3A%2F%2Flibservdhc2.princeton.edu%3A8080%2Fexist%2Frestxq%2Fsprings%2Fiiif%2F', $bmtnid, '%2Fmanifest.json'))
-    let $uvURI := concat('http://lib-staff373.princeton.edu:8001/examples?manifest=', $manifestURI)
-    return
-    <div id="app">
-        <iframe style="width:1000px; height:900px"
-         src="{$uvURI}"/>
-    </div>
-};
-
 declare function issue:mirador-script($node as node(), $model as map(*), $issueURN as xs:string?)
 as element()
 {
@@ -107,6 +92,19 @@ declare %templates:wrap function issue:constituents($node as node(), $model as m
 as map(*)
 {
     map { "selected-issue-constituents" := $model("selected-issue")//tei:relatedItem[@type='constituent'] }    
+};
+
+declare %templates:wrap function issue:selected-title-link($node as node(), $model as map(*))
+{
+    let $titleID := $model('selected-issue')//tei:relatedItem[@type='host']/@target
+    let $titleDoc := collection($config:transcript-root)//tei:idno[@type='bmtnid' and .= $titleID]/ancestor::tei:TEI
+    let $xsl := doc($config:app-root || "/resources/xsl/title.xsl")
+    let $xslt-parameters := 
+        <parameters>
+            <param name="context" value="selected-title-label-brief"/>
+        </parameters>
+    let $label := transform:transform($titleDoc, $xsl, $xslt-parameters)
+    return <a href="title.html?titleURN={$titleID}">{$label}</a>
 };
 
 declare function issue:thumbnails($node as node(), $model as map(*))

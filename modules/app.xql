@@ -3,6 +3,7 @@ xquery version "3.0";
 module namespace app="http://bluemountain.princeton.edu/modules/app";
 
 import module namespace templates="http://exist-db.org/xquery/templates" ;
+import module namespace image="http://exist-db.org/xquery/image" ;
 import module namespace config="http://bluemountain.princeton.edu/config" at "config.xqm";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
@@ -188,4 +189,37 @@ declare function app:tei-title-id($title as element())
 as xs:string
 {
     app:tei-issue-id($title)
+};
+
+declare
+    %templates:wrap
+function app:print-title($node as node(), $model as map(*))
+{
+    let $xsl := doc($config:app-root || "/resources/xsl/title.xsl")
+    let $xslt-parameters := 
+        <parameters>
+            <param name="context" value="selected-title-label"/>
+        </parameters>
+    return transform:transform($model("title"), $xsl, $xslt-parameters)
+};
+
+declare
+    %templates:wrap
+function app:print-abstract($node as node(), $model as map(*))
+{
+    let $xsl := doc($config:app-root || "/resources/xsl/title.xsl")
+    let $xslt-parameters := 
+        <parameters>
+            <param name="context" value="selected-title-abstract"/>
+        </parameters>
+    return transform:transform($model("title"), $xsl, $xslt-parameters)
+};
+
+declare function app:icon($node as node(), $model as map(*))
+{
+    <a href="{concat('title.html?titleURN=',app:tei-title-id($model("title")))}">
+    <img src="/exist/rest/db/apps/bluemountain/resources/icons/periodicals/{app:tei-title-id($model("title"))}/large.jpg" style="max-height: 100px; display: block;
+    margin: 0 auto;
+    clear: right;"/>
+    </a>
 };

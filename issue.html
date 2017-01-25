@@ -1,63 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <article xmlns="http://www.w3.org/1999/xhtml" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
-    <div class="row" data-template="issue:selected-issue">
-        <div class="col-md-12">
-            <h1 id="magazine-title">
-                <span data-template="issue:label">Broom</span>
-            </h1>
-            <div class="folioline">
-                <div class="row" style="padding-bottom: 20px;">
-                    <div class="col-md-4 issue-volume">
-                        <span data-template="issue:volume"/>
-                    </div>
-                    <div class="col-md-4 issue-date" style="text-align: center;">
-                        <span data-template="issue:pubDate"/>
-                    </div>
-                    <div class="col-md-4 issue-number" style="text-align: right;">
-                        <span data-template="issue:number"/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 issue-editors">
-                        <span data-template="issue:editors"/>
-                    </div>
-                    <div class="col-md-6 issue-pubplace" style="text-align: right;">
-                        <span data-template="issue:pubPlace"/>
-                    </div>
-                </div>
-            </div>
-            <div id="tabs">
-                <ul>
-                    <li>
-                        <a href="#toc">Table of Contents</a>
-                    </li><!--                    <li>
-                        <a href="#msDesc">Copy Description</a>
-                    </li>-->
-                    <li>
-                        <a href="#viewer">Viewer</a>
-                    </li>
-                </ul>
-                <div id="toc" data-template="issue:constituents">
-                    <table class="table" data-template="issue:constituents-table"/>
-                </div><!--<div data-template="issue:selected-issue-transcription">
-                    <div id="msDesc" data-template="issue:ms-description">
-                        <div class="col-md-8">
-                            <h2>Physical Description</h2>
-                        </div>
-                        <div class="col-md-4">
-                            <h2>History of the Object</h2>
-                        </div>
-                    </div>
-                </div>-->
-                <div id="viewer" data-template="issue:uv-embed" class="uv" data-uri="http://localhost:8080/exist/restxq/iiif/bmtnaap_1921-12_01/manifest" data-collectionindex="0" data-manifestindex="0" data-sequenceindex="0" data-canvasindex="0" data-zoom="-0.9121,-0.0834,2.8243,1.6682" data-rotation="0"/>
-            </div>
+    <div class="container-fluid" data-template="issue:selected-issue">
+        <div class="row">
+            <ol class="breadcrumb">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li>
+                    <a href="periodicals.html">Periodicals</a>
+                </li>
+                <li>
+                    <a href="" data-template="issue:selected-title-link">Selected Magazine</a>
+                </li>
+            </ol>
+        </div>
+        <div class="row">
+            <div id="viewer" data-template="issue:uv-embed" class="uv" data-uri="http://localhost:8080/exist/restxq/iiif/bmtnaap_1921-12_01/manifest" data-collectionindex="0" data-manifestindex="0" data-sequenceindex="0" data-canvasindex="0" data-zoom="-0.9121,-0.0834,2.8243,1.6682" data-rotation="0"/>
         </div>
     </div>
     <script src="resources/js/jquery-ui/external/jquery/jquery.js"/>
     <script src="resources/js/jquery-ui/jquery-ui.js"/>
     <script type="text/javascript" id="embedUV" src="resources/uv/lib/embed.js"/>
     <script type="text/javascript">/* wordpress fix */</script>
-    <script>
-        $("#tabs").tabs ();
-    </script>
 </article>

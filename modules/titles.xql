@@ -14,7 +14,7 @@ declare %templates:wrap function titles:all-tei($node as node(), $model as map(*
 as map(*) 
 {
     let $titleSequence :=
-        for $doc in collection($config:transcript-root)/tei:TEI[tei:teiHeader/tei:profileDesc/tei:textClass/tei:classCode='300215389']
+        for $doc in collection($config:transcript-root)//tei:classCode[. = '300215389']/ancestor::tei:TEI    
         let $sortTitle := $doc/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:title[@level='j']/tei:seg[@type='main'][1]
         order by lower-case($sortTitle)
         return $doc
