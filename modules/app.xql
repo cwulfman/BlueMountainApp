@@ -191,6 +191,16 @@ as xs:string
     app:tei-issue-id($title)
 };
 
+declare function app:magazine-label($bmtnid as xs:string)
+as xs:string*
+{
+    let $magazine-title := collection($config:transcript-root)//tei:idno[. = $bmtnid]/ancestor::tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:title[1]
+    return
+        if ($magazine-title/tei:seg[@type='nonSort'])
+            then string-join(($magazine-title/tei:seg[@type='nonSort'], $magazine-title/tei:seg[@type='main'][1]), ' ')
+        else $magazine-title/tei:seg[@type='main'][1]
+};
+
 declare
     %templates:wrap
 function app:print-title($node as node(), $model as map(*))
@@ -214,6 +224,18 @@ function app:print-abstract($node as node(), $model as map(*))
         </parameters>
     return transform:transform($model("title"), $xsl, $xslt-parameters)
 };
+
+declare
+    %templates:wrap
+function app:print-pubDates($node as node(), $model as map(*))
+{
+    let $date := $model("title")/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:biblStruct/tei:monogr/tei:imprint/tei:date
+    return
+        if ($date/@from)
+            then string-join(($date/@from, $date/@to), '-')
+        else xs:string($date/@when)
+};
+
 
 declare function app:icon($node as node(), $model as map(*))
 {
