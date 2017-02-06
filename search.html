@@ -1,103 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <article xmlns="http://www.w3.org/1999/xhtml" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
     <div data-template="selections:search-results">
-        <div class="row">
-            <div class="col-md-12">
-                <h2>search</h2>
-                <form class="form-inline" method="get" action="search.html">
-                    <div class="form-group">
-                        <label for="where">Where </label>
-                        <select class="form-control" data-template="templates:form-control" id="where" name="where">
-                            <option value="any">any metadata field</option>
-                            <option value="title">title</option>
-                            <option value="byline">byline</option>
-                            <option value="fulltext">full text</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <select class="form-control" data-template="templates:form-control" id="matchtype" name="matchtype">
-                            <option value="all">matches all</option>
-                            <option value="any">matches any</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="querystring" name="querystring" data-template="templates:form-control" placeholder="search terms" style="width:100%"/>
-                    </div>
-                    <button type="submit" class="btn btn-default">Search</button>
-                </form>
-            </div>
-        </div><!--
-            <hr/>
-            <form>
-                <label>Narrow your results by:</label>
-                <fieldset>
-                    <legend>where terms appear</legend>
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <span class="badge">40</span>
-                            <input type="checkbox" name="foundin" value="metadata"/>Metadata
-                        </li>
-                        <li class="list-group-item">
-                            <span class="badge">20</span>
-                            <input type="checkbox" name="foundin" value="fulltext"/>Full Text   
-                        </li>
-                    </ul>
-                </fieldset>
-                <fieldset>
-                    <legend>language of contribution</legend>
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <span class="badge">40</span>
-                            <input type="checkbox" name="language" value="german"/>German
-                        </li>
-                        <li class="list-group-item">
-                            <span class="badge">23</span>
-                            <input type="checkbox" name="language" value="fre"/>French   
-                        </li>
-                        <li class="list-group-item">
-                            <span class="badge">5</span>
-                            <input type="checkbox" name="language" value="eng"/>English   
-                        </li>
-                        <li class="list-group-item">
-                            <span class="badge">1</span>
-                            <input type="checkbox" name="language" value="italian"/>Italian   
-                        </li>
-                    </ul>
-                </fieldset>
-                <fieldset>
-                    <legend>magazine</legend>
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <span class="badge">31</span>
-                            <input type="checkbox" name="magazine" value="action"/>Der Sturm
-                        </li>
-                        <li class="list-group-item">
-                            <span class="badge">5</span>
-                            <input type="checkbox" name="magazine" value="291"/>291   
-                        </li>
-                        <li class="list-group-item">
-                            <span class="badge">3</span>
-                            <input type="checkbox" name="magazine" value="dada"/>Dada   
-                        </li>
-                        <li class="list-group-item">
-                            <span class="badge">1</span>
-                            <input type="checkbox" name="magazine" value="broom"/>Broom   
-                        </li>
-                        <li class="list-group-item">
-                            <span class="badge">1</span>
-                            <input type="checkbox" name="magazine" value="surr"/>Surrealisme   
-                        </li>
-                    </ul>
-                </fieldset>
-            </form>
-            -->
+        <div class="container" data-template="selections:display-search-form"/>
         <hr/>
+        <div class="container" data-template="selections:display-debug"/>
         <div class="row">
             <div class="col-md-12">
-                <div class="selections:display-search-results">
-                    <p>search results here</p>
+                <div data-template="selections:display-search-results">
+                    <p>search results display here</p>
                 </div>
             </div>
+        </div>
+        <div class="container" data-template="selections:display-pager">
+            <p>pager widget displays here</p>
         </div>
     </div>
 </article>

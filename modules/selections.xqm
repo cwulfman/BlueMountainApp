@@ -13,8 +13,39 @@ declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 declare
+ %templates:wrap
+function selections:display-search-form($node as node(), $model as map(*))
+{
+            <div class="col-md-12">
+                <h2>search</h2>
+                <form class="form-inline" method="get" action="search.html">
+                    <div class="form-group">
+                        <label for="where">Where </label>
+                        <select class="form-control" data-template="templates:form-control" id="where" name="where">
+                            <option value="any">any metadata field</option>
+                            <option value="title">title</option>
+                            <option value="byline">byline</option>
+                            <option value="fulltext">full text</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" data-template="templates:form-control" id="matchtype" name="matchtype">
+                            <option value="all">matches all</option>
+                            <option value="any">matches any</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="querystring" name="querystring" data-template="templates:form-control" placeholder="search terms" style="width:100%"/>
+                    </div>
+                    <button type="submit" class="btn btn-default">Search</button>
+                </form>
+            </div>
+
+};
+
+declare
  %templates:wrap 
-function selections:search-results($node as node(), $model as map(*), $where as xs:string?, $matchtype as xs:string?, $bmtnid as xs:string?,$querystring as xs:string?)
+function selections:search-results($node as node(), $model as map(*), $where as xs:string?, $matchtype as xs:string?, $bmtnid as xs:string?,$querystring as xs:string?, $start as xs:integer?, $displaycount as xs:integer? )
 as map(*)?
 {
     let $collection      :=
@@ -54,14 +85,17 @@ as map(*)?
             "hits": if ($fulltextp) then () else $hits,
             "ft-hits": if ($fulltextp) then $hits else (),
             "fulltextp" : $fulltextp,
-            "bmtnid" : $bmtnid
-            }    
+            "bmtnid" : $bmtnid,
+            "start" : if ($start) then $start else 1,
+            "displaycount" : if ($displaycount) then $displaycount else $config:max-hit-display
+         }
 
 };
 
-declare 
-%templates:default("debug", "true")
-function selections:display-search-results($node as node(), $model as map(*), $debug as xs:string)
+declare
+ %templates:default("debug", "true")
+function selections:display-debug($node as node(), $model as map(*), $debug as xs:string)
+as element()*
 {
     if ($debug = 'true') then
     <dl>
@@ -74,18 +108,40 @@ function selections:display-search-results($node as node(), $model as map(*), $d
         <dt>hit count</dt><dd>{ count($model("hits")) }</dd>
         <dt>ft-hit count</dt><dd>{ count($model("ft-hits")) }</dd>        
         <dt>full text?</dt><dd>{ $model("fulltextp") }</dd>
-        <dt>debug?</dt><dd>{ $debug }</dd>
+        <dt>start</dt><dd>{ $model("start") }</dd>
+        <dt>displaycount</dt><dd>{ $model("displaycount") }</dd>
 
-    </dl> else (),
-    
-     if ($model("fulltextp")) then
+    </dl> else ()
+};
+
+
+declare function selections:display-search-results($node as node(), $model as map(*))
+{
+    if ($model("fulltextp")) then
+      if ($model("bmtnid")) then
+         selections:format-fulltext-singleton($node, $model)
+      else
         selections:formatted-fulltext-accordion($node, $model) 
-        else
-        <ul>
-        { for $hit in $model('hits') return <li>{ selections:formatted-item($hit)}</li> }
-        </ul>
-     
+   else
+    selections:display-metadata-results($node, $model)
+};
 
+declare function selections:display-metadata-results($node as node(), $model as map(*))
+as element()*
+{
+    
+    let $max := count($model('hits'))
+    let $start := $model('start')
+    let $end := min (($start + $config:max-hit-display - 1,$max))
+    return
+      <ul>
+        { for $hit in subsequence($model('hits'), $start,$end) return <li>{ selections:formatted-item($hit)}</li> }
+      </ul>
+};
+
+declare function selections:format-fulltext-singleton($node as node(), $model as map(*))
+{
+<p>full text singleton</p>
 };
 
 declare %templates:wrap function selections:selected-items($node as node(), $model as map(*), 
@@ -496,4 +552,32 @@ as element()*
     return
     (<dt>{$ref}</dt>,
     <dd>{ kwic:summarize($hit, <config width="40" />) }</dd>)
+};
+
+declare %templates:wrap function selections:display-pager($node as node(), $model as map(*))
+as element()*
+{
+    let $start-previous := $model('start') - $model('displaycount') + 1
+    let $start-next := $model('start') + $model('displaycount') + 1
+    return
+    <ul>
+        {
+            if ($start-previous > 0) then
+              <li>
+            <a href="search.html?where={$model('where')}&amp;matchtype={$model('matchtype')}&amp;bmtnid={$model('bmtnid')}&amp;querystring={$model('querystring')}&amp;start={$start-previous}">
+            Previous</a>
+        </li>
+        else ()
+        }
+        {
+            if ($start-next < count($model('hits'))) then
+              <li>
+            <a href="search.html?where={$model('where')}&amp;matchtype={$model('matchtype')}&amp;bmtnid={$model('bmtnid')}&amp;querystring={$model('querystring')}&amp;start={$start-next}">
+            Next</a>
+        </li>
+        else ()
+        }
+    </ul>
+
+
 };
