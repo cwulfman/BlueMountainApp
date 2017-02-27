@@ -141,7 +141,51 @@ as element()*
 
 declare function selections:format-fulltext-singleton($node as node(), $model as map(*))
 {
-<p>full text singleton</p>
+    let $max := count($model('ft-hits'))
+    let $start := if ($model('start')) then $model('start') else 1
+    let $end := min (($start + $config:max-hit-display - 1,$max))
+    return
+    (<dl>
+        <dt>max</dt>
+        <dd>{ $max }</dd>
+        <dt>start</dt>
+        <dd>{ $start }</dd>
+        <dt>end</dt>
+        <dd>{ $end }</dd>
+    </dl>,
+         <ul>
+        {
+            for $chunk in subsequence($model('ft-hits'), $start, $end)
+            let $issue := $chunk/ancestor::tei:TEI
+
+            let $issueid := $issue//tei:idno[@type='bmtnid']
+            group by $issueid
+            order by $issueid
+            return 
+                <li><a href="issue.html?issueURN={$issueid}">{ selections:issue-label($issueid) }</a>
+                    <ul>
+                    {
+                        for $constituent in $chunk
+(:                        let $expanded := kwic:expand($constituent):)
+                        let $id := $constituent/@corresp
+                        (: let $relItem := $constituent/ancestor::tei:TEI//tei:relatedItem[@xml:id = $id] :)
+                        let $relItem := $constituent/id($id)
+                        let $citation := if ($relItem) then 
+                            selections:formatted-item-brief($relItem)
+                        else string-join(("no citation available for",$id), ' ')
+                        order by ft:score($constituent) descending
+                        return
+                        <li> {$citation}
+                            <br/>
+                            { kwic:summarize($constituent, <config width="40"/>)}
+                        </li>
+                    }
+                    </ul>
+ 
+                </li>
+        }
+      </ul>)
+
 };
 
 declare %templates:wrap function selections:selected-items($node as node(), $model as map(*), 
@@ -559,6 +603,8 @@ as element()*
 {
     let $start-previous := $model('start') - $model('displaycount') + 1
     let $start-next := $model('start') + $model('displaycount') + 1
+    let $hitcount :=
+        if ($model("fulltextp")) then count($model('ft-hits')) else count($model('hits'))
     return
     <ul>
         {
@@ -570,7 +616,7 @@ as element()*
         else ()
         }
         {
-            if ($start-next < count($model('hits'))) then
+            if ($start-next < $hitcount) then
               <li>
             <a href="search.html?where={$model('where')}&amp;matchtype={$model('matchtype')}&amp;bmtnid={$model('bmtnid')}&amp;querystring={$model('querystring')}&amp;start={$start-next}">
             Next</a>
