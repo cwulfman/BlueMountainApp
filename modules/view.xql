@@ -20,6 +20,7 @@ import module namespace bmtneer="http://bluemountain.princeton.edu/modules/bmtne
 import module namespace selections="http://bluemountain.princeton.edu/modules/selections" at "selections.xqm" ;
 import module namespace contributions="http://bluemountain.princeton.edu/modules/contributions" at "contributions.xqm" ;
 import module namespace contribution="http://bluemountain.princeton.edu/modules/contribution" at "contribution.xqm" ;
+import module namespace contributors="http://bluemountain.princeton.edu/modules/contributors" at "contributors.xqm" ;
 
 
 

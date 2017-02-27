@@ -7,11 +7,14 @@ import module namespace config="http://bluemountain.princeton.edu/config" at "co
 import module namespace app="http://bluemountain.princeton.edu/modules/app" at "app.xql";
 import module namespace kwic="http://exist-db.org/xquery/kwic";
 import module namespace title="http://bluemountain.princeton.edu/modules/title" at "title.xqm";
+import module namespace contributors="http://bluemountain.princeton.edu/modules/contributors" at "contributors.xqm";
+import module namespace selections="http://bluemountain.princeton.edu/modules/selections" at "selections.xqm";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace mets="http://www.loc.gov/METS/";
 declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace skos = "http://www.w3.org/2004/02/skos/core#";
 
 
@@ -29,7 +32,14 @@ as map(*)
 };
 
 
-declare function contributions:contributions-tei($node as node(), $model as map(*), $titleURN as xs:string, $authid as xs:string)
+declare function contributions:contributions-tei($node as node(), $model as map(*), $authid as xs:string)
+as map(*)
+{
+    let $contributions := collection($config:transcript-root)//tei:relatedItem[@type='constituent' and .//tei:persName/@ref = $authid]
+    return map {'contributor' : $authid, 'contributor-label' : contributors:label(contributors:rec($authid)),  'contributions' : $contributions }
+};
+
+declare function contributions:contributions-tei-old($node as node(), $model as map(*), $titleURN as xs:string?, $authid as xs:string)
 as map(*)
 {
     let $titleRec :=
@@ -59,6 +69,11 @@ declare function contributions:contributor($node as node(), $model as map(*))
     return xs:string($label)
 };
 
+declare function contributions:contributor-label($node as node(), $model as map(*))
+{
+    $model('contributor-label')
+};
+
 declare function contributions:magazine($node as node(), $model as map(*))
 {
     $model('selected-title')/mods:titleInfo[1]/mods:title[1]/text()
@@ -68,26 +83,6 @@ declare function contributions:magazine($node as node(), $model as map(*))
 declare function contributions:magazine-tei($node as node(), $model as map(*))
 {
     title:selected-title-label($node, $model)
-};
-
-declare
-    %templates:wrap
-function contributions:listing($node as node(), $model as map(*))
-{
-    let $contributions := $model('contributions')
-    return
-        <ol>
-            {
-                for $contribution in $contributions
-                let $title := xs:string($contribution/mods:titleInfo[1]/mods:title[1])
-                let $date  := xs:string($contribution/ancestor::mods:mods/mods:originInfo/mods:dateIssued[@keyDate='yes'])
-                let $id    := $contribution/@ID
-                let $label := $title || '  (' || $date || ')'
-                order by $date
-                return
-                    <li>{ $label }</li>
-            }
-        </ol>
 };
 
 
@@ -116,6 +111,15 @@ function contributions:table($node as node(), $model as map(*))
         </table>
 };
 
+declare
+ %templates:wrap
+function contributions:listing($node as node(), $model as map(*))
+{
+        <ul>
+        { for $hit in $model('contributions') return <li>{ selections:formatted-item($hit)}</li> }
+        </ul>
+
+};
 
 declare
     %templates:wrap

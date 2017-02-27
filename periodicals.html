@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <article xmlns="http://www.w3.org/1999/xhtml" data-template="templates:surround" data-template-with="templates/page.html" data-template-at="content">
-    <div class="container" data-template="titles:all-tei">
-        <div class="row">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="index.html">Home</a>
-                </li>
-                <li class="active">Periodicals</li>
-            </ol>
-        </div>
-        <div class="row">
-            <h1 style="margin-top:-5px;">Periodicals</h1>
-            <hr/>
-        </div>
-        <div class="row">
-            <div class="templates:each?from=titles&amp;to=title">
-                <div class="col-sm-6 col-md-3" style="min-height: 250px">
-                    <img src="" data-template="app:icon" style="width: 100;"/>
-                    <div class="caption">
-                        <h3 data-template="app:print-title" style="min-height: 3em; text-align: center;">Title</h3>
-                        <p data-template="app:print-pubDates" style="text-align: center;">1900-1910</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="container" data-template="titles:all-tei">
+    <div class="row">
+      <ol class="breadcrumb">
+        <li>
+          <a href="index.html">Home</a>
+        </li>
+        <li class="active">Periodicals</li>
+      </ol>
     </div>
+    <div class="row">
+      <h1 style="margin-top:-5px;">Periodicals</h1>
+      <hr/>
+    </div>
+    <div class="row">
+      <div class="templates:each?from=titles&amp;to=title">
+        <div class="col-sm-6 col-md-3" style="min-height: 375px">
+          <img src="" data-template="app:icon" style="width: 100;"/>
+          <div class="caption">
+            <h3 data-template="app:print-title" style="min-height: 3em; text-align: center;">Title</h3>
+            <p data-template="app:print-abstract">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id
+            elit non mi porta gravida at eget metus. Nullam id dolor id nibh
+            ultricies vehicula ut id elit.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </article>
