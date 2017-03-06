@@ -7,6 +7,7 @@ import module namespace templates="http://exist-db.org/xquery/templates" ;
 declare namespace skos="http://www.w3.org/2004/02/skos/core#";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace schema="http://schema.org/";
+declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 declare default collation "?lang=en-US";
 
@@ -28,9 +29,7 @@ as map(*)?
     map{ "contributors" := collection('/db/data/bmtn/auth/viaf')//rdf:Description[rdf:type/@rdf:resource = 'http://schema.org/Person']/ancestor::rdf:RDF }
 };
 
-declare
- %templates:wrap
-function contributors:list($node as node(), $model as map(*))
+declare function contributors:list($node as node(), $model as map(*))
 as element()
 {
     <ol> {
@@ -78,4 +77,23 @@ as xs:string
 
     return
          $label 
+};
+
+declare function contributors:bylines($node as node(), $model as map(*))
+as map(*)?
+{
+    let $bylines := collection('/db/bmtn-data/transcriptions')//tei:respStmt[tei:resp='cre']/tei:persName[empty(@ref)]
+    return map{ "bylines" : distinct-values($bylines) }
+};
+
+
+declare function contributors:byline-list($node as node(), $model as map(*))
+as element()
+{
+    <ol> {
+           for $byline in $model("bylines")
+           order by $byline 
+           return
+            <li><a href="contributions.html?byline={$byline}">{ $byline }</a></li>
+    }</ol>
 };

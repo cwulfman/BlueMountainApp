@@ -32,11 +32,24 @@ as map(*)
 };
 
 
-declare function contributions:contributions-tei($node as node(), $model as map(*), $authid as xs:string)
+declare function contributions:contributions-tei($node as node(), $model as map(*), $authid as xs:string?, $byline as xs:string?)
 as map(*)
 {
-    let $contributions := collection($config:transcript-root)//tei:relatedItem[@type='constituent' and .//tei:persName/@ref = $authid]
-    return map {'contributor' : $authid, 'contributor-label' : contributors:label(contributors:rec($authid)),  'contributions' : $contributions }
+    let $contributions-old := collection($config:transcript-root)//tei:relatedItem[@type='constituent' and .//tei:persName/@ref = $authid]
+    let $contributions := 
+        if ($authid)
+         then collection($config:transcript-root)//tei:relatedItem[.//tei:persName/@ref = $authid and @type='constituent'] 
+        else if ($byline)
+         then collection($config:transcript-root)//tei:relatedItem[.//tei:persName = $byline and @type='constituent']
+        else ()
+    
+
+    return map {'contributor' : if ($authid) then $authid else $byline, 
+                'contributor-label' : 
+                    if ($authid)
+                     then contributors:label(contributors:rec($authid))
+                    else $byline,  
+                'contributions' : $contributions }
 };
 
 declare function contributions:contributions-tei-old($node as node(), $model as map(*), $titleURN as xs:string?, $authid as xs:string)

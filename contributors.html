@@ -14,7 +14,23 @@
             <hr/>
         </div>
         <div class="row" data-template="contributors:all">
-            <ol class="contributors:list"/>
+            <div class="col-md-6">
+                <header>
+                    <h3>Authorized Names</h3>
+                    <p>These are magazine contributors whose
+                    identities have been confirmed in the 
+                        <a href="viaf.org">Virtual International Authority File</a>.</p>
+                </header>
+                <ol class="contributors:list"/>
+            </div>
+            <div class="col-md-6" data-template="contributors:bylines">
+                <header>
+                    <h3>Bylines</h3>
+                    <p>These are bylines we have not yet matched to persons
+                    in VIAF.</p>
+                </header>
+                <ol class="contributors:byline-list"/>
+            </div>
         </div>
     </div>
 </article>
