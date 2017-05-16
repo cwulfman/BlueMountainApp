@@ -6,6 +6,7 @@ import module namespace templates="http://exist-db.org/xquery/templates" ;
 import module namespace config="http://bluemountain.princeton.edu/config" at "config.xqm";
 import module namespace app="http://bluemountain.princeton.edu/modules/app" at "app.xql";
 import module namespace issue="http://bluemountain.princeton.edu/modules/issue" at "issue.xqm";
+import module namespace contributors="http://bluemountain.princeton.edu/modules/contributors" at "contributors.xqm";
 
 declare namespace mets="http://www.loc.gov/METS/";
 declare namespace mods="http://www.loc.gov/mods/v3";
@@ -81,12 +82,10 @@ as element()*
     collection('/db/bmtn-data/transcriptions')//tei:relatedItem[@type='host' and @target= $bmtnid]/ancestor::tei:TEI
 };
 
-declare function title:issues-tei($node as node(), $model as map(*))
+declare %templates:wrap function title:issues-tei($node as node(), $model as map(*))
 as map(*)
 {
     let $titleURN := $model("selected-title")//tei:publicationStmt/tei:idno
-(:    let $issues := collection('/db/bmtn-data/transcriptions')//tei:relatedItem[@type='host' and @target= "urn:PUL:bluemountain:" ||$titleURN]/ancestor::tei:TEI
-:)
     let $issues := collection('/db/bmtn-data/transcriptions')//tei:relatedItem[@type='host' and @target= $titleURN]/ancestor::tei:TEI
 
     return map { "selected-title-issues" := $issues }
@@ -398,22 +397,34 @@ declare function title:contributor-table($node as node(), $model as map(*))
         </table>
 };
 
-declare function title:contributor-table-tei($node as node(), $model as map(*))
+declare %templates:wrap function title:contributor-table-tei($node as node(), $model as map(*))
 {
     let $contributors := $model('contributors')
     let $titleURN := $model("selected-title")//tei:publicationStmt/tei:idno
+    
+    let $unauthorized-contributors := $contributors[empty(@ref)]
+    let $authorized-contributors := $contributors except $unauthorized-contributors
 
     
     let $known-rows :=
-        for $contributor in $model('contributors')
+        for $contributor in $authorized-contributors
+ 
         group by $ref := $contributor/@ref
+        
         return
             <tr>
-        <td>{ $contributor }</td>    
+                <td>{ contributors:label(contributors:rec($ref)) }</td>
+                <td>{ count($contributor) }</td>
             </tr>
-
-     let $rows := $known-rows
-           
+            
+    let $unknown-rows :=
+        for $contributor in $unauthorized-contributors
+        group by $contributor
+        return
+            <tr>
+                <td>{ data($contributor) }</td>
+                <td>{ count($contributor) }</td>
+            </tr>           
     
     return 
         <table class="table">
@@ -421,16 +432,20 @@ declare function title:contributor-table-tei($node as node(), $model as map(*))
         <thead>
            <tr>
              <th>Contributor</th>
-             <th>No. of Contributions</th>
+             <th>Number of Contributions</th>
            </tr>
          </thead>
          <tbody>
-         {
-            for $row in $rows
+            <tr>
+               <th colspan="2">verified names</th>
+            </tr>
+         { $known-rows }</tbody>
+         <tbody>
+            <tr>
+               <th colspan="2">unverified bylines</th>
+            </tr>         
+         { $unknown-rows }</tbody>
 
-            return $row
-          }
-         </tbody>
         </table>
 };
 

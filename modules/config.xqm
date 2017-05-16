@@ -110,3 +110,4 @@ declare function config:app-info($node as node(), $model as map(*)) {
 
 declare variable $config:springs-root  as xs:string { "http://localhost:8080/exist/restxq/springs" };
 declare variable $config:iiif-root     as xs:string { "http://localhost:8080/exist/restxq/iiif" };
+declare variable $config:pdf-root      as xs:string { "http://bluemountain.princeton.edu/pdfs" };

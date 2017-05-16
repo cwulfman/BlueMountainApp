@@ -276,3 +276,19 @@ as element()?
     let $div    := transform:transform($msDesc, $xsl, ())
     return $div
 };
+
+declare function issue:pdf($node as node(), $model as map(*))
+{
+    let $issueid := $model("selected-issue")//tei:idno[@type='bmtnid']
+    let $titleid := substring-before($issueid, '_')
+    let $datetok := substring-after($issueid, '_')
+    let $datepath := replace($datetok, '-', '/')
+    
+    let $pdfbase := string-join(($config:pdf-root, 'periodicals', $titleid, 'issues', $datepath, $issueid), '/')
+    
+    let $url := $pdfbase || '.pdf'
+    return
+ <a href="{$url}" class="btn btn-default btn-lg">PDF</a>
+};
+
+

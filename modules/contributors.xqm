@@ -4,6 +4,8 @@ xquery version "3.1";
 module namespace contributors="http://bluemountain.princeton.edu/modules/contributors";
 import module namespace templates="http://exist-db.org/xquery/templates" ;
 
+import module namespace console="http://exist-db.org/xquery/console";
+
 declare namespace skos="http://www.w3.org/2004/02/skos/core#";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace schema="http://schema.org/";
@@ -20,6 +22,7 @@ as xs:string
 declare function contributors:rec($id as xs:string)
 as element()
 {
+   (: console:log(concat("in contributors:rec, $id=|", $id, "|")), :)
     collection('/db/data/bmtn/auth/viaf')//rdf:Description[@rdf:about= $id]/ancestor::rdf:RDF
 };
 

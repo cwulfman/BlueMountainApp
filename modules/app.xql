@@ -5,6 +5,7 @@ module namespace app="http://bluemountain.princeton.edu/modules/app";
 import module namespace templates="http://exist-db.org/xquery/templates" ;
 import module namespace image="http://exist-db.org/xquery/image" ;
 import module namespace config="http://bluemountain.princeton.edu/config" at "config.xqm";
+import module namespace title="http://bluemountain.princeton.edu/modules/title" at "title.xqm";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace mets="http://www.loc.gov/METS/";
@@ -238,6 +239,15 @@ function app:print-pubDates($node as node(), $model as map(*))
 
 
 declare function app:icon($node as node(), $model as map(*))
+{
+    <a href="{concat('title.html?titleURN=',app:tei-title-id($model("title")))}">
+    <img src="{title:icon(app:tei-title-id($model("title")))}" style="max-height: 100px; display: block;
+    margin: 0 auto;
+    clear: right;"/>
+    </a>
+};
+
+declare function app:icon-cached($node as node(), $model as map(*))
 {
     <a href="{concat('title.html?titleURN=',app:tei-title-id($model("title")))}">
     <img src="/exist/rest/db/apps/bluemountain/resources/icons/periodicals/{app:tei-title-id($model("title"))}/large.jpg" style="max-height: 100px; display: block;

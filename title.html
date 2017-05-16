@@ -4,63 +4,55 @@
         <div class="row">
             <div class="col-md-8">
                 <h1 data-template="title:selected-title-label">Broom</h1>
-                <p class="abstract" data-template="title:abstract">Lorem ipsum dolor sit amet, 
-                    consectetur adipiscing elit. Nulla ut lorem massa. Duis sed neque sed nulla maximus volutpat.
-                    Nam faucibus rutrum venenatis. Phasellus at augue vel mi aliquam vehicula id non diam. 
-                    Aliquam rhoncus ligula sed urna ornare tincidunt at et ipsum. Sed posuere viverra fringilla.
-                    Duis ullamcorper pretium risus, in sagittis turpis egestas sit amet. 
-                    Mauris at dui eget lorem porttitor porta et in orci.</p>
+                <p class="abstract" data-template="title:abstract">Lorem ipsum dolor sit amet,
+                    consectetur adipiscing elit. Nulla ut lorem massa. Duis sed neque sed nulla
+                    maximus volutpat. Nam faucibus rutrum venenatis. Phasellus at augue vel mi
+                    aliquam vehicula id non diam. Aliquam rhoncus ligula sed urna ornare tincidunt
+                    at et ipsum. Sed posuere viverra fringilla. Duis ullamcorper pretium risus, in
+                    sagittis turpis egestas sit amet. Mauris at dui eget lorem porttitor porta et in
+                    orci.</p>
             </div>
         </div>
         <hr/>
-        <script type="text/javascript" src="https://www.google.com/jsapi?autoload={             'modules':[{             'name':'visualization',             'version':'1',             'packages':['corechart']             }]             }"/>
-        <script type="text/javascript">
-            google.setOnLoadCallback(drawChart);
-            
-            function drawChart() {
-            
-            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-            
-            chart.draw(data, options);
-            }
-        </script>
-        <script type="text/javascript">
-            var options = {
-            title: 'Page Count Over Time',
-            curveType: 'function',
-            legend: { position: 'bottom' }
-            };
-        </script>
         <div class="row" data-template="title:issues-tei">
-            <div class="col-md-12">
+            <div class="col-md-4">
+                <div data-template="bmtneer:contributors-tei">
+                    <div data-template="title:contributor-table-tei"/>
+                </div>
+            </div>
+            <div class="col-md-8">
                 <div>
-                    <p>Blue Mountain contains <span data-template="title:issue-count"/>
-                    issues of <span data-template="title:selected-title-label"/>.</p>
-                    <ol data-template="title:issue-listing-tei">
-                        <li>
-                            <b>Volume 1</b>
-                            <ul>
-                                <li>
-                                    <a href="issue.html">Volume 1, Number 1, November 1921</a>
-                                </li>
-                                <li>Volume 1, Number 2, December 1921</li>
-                                <li>Volume 1, Number 3, January 1922</li>
-                                <li>Volume 1, Number 4, February 1922</li>
-                            </ul>
-                        </li>
-                        <li>
-                            <b>Volume 2</b>
-                            <ul>
-                                <li>Volume 2, Number 1, April 1922</li>
-                                <li>Volume 2, Number 2, May 1922</li>
-                                <li>Volume 2, Number 3, June 1922</li>
-                                <li>Volume 2, Number 4, July 1922</li>
-                            </ul>
-                        </li>
-                    </ol>
+                    <div>
+                        <p>Blue Mountain contains <span data-template="title:issue-count"/> issues
+                            of <span data-template="title:selected-title-label"/>.</p>
+                        <ol data-template="title:issue-listing-tei">
+                            <li>
+                                <b>Volume 1</b>
+                                <ul>
+                                    <li>
+                                        <a href="issue.html">Volume 1, Number 1, November 1921</a>
+                                    </li>
+                                    <li>Volume 1, Number 2, December 1921</li>
+                                    <li>Volume 1, Number 3, January 1922</li>
+                                    <li>Volume 1, Number 4, February 1922</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <b>Volume 2</b>
+                                <ul>
+                                    <li>Volume 2, Number 1, April 1922</li>
+                                    <li>Volume 2, Number 2, May 1922</li>
+                                    <li>Volume 2, Number 3, June 1922</li>
+                                    <li>Volume 2, Number 4, July 1922</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="row"/>
+
+
+
     </div>
 </article>
